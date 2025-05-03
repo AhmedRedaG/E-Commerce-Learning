@@ -1,0 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+header ul {
+  list-style: none;
+  display: flex;
+  background-color: #333;
+  padding: 10px;
+}
+
+header ul li a {
+  text-decoration: none;
+  padding: 10px 30px;
+}
+
+header ul li .active,
+header ul li a:hover {
+  background-color: #555;
+  color: #fff;
+}
+
+main {
+  padding: 20px;
+}

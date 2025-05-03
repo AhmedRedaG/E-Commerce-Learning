@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Chocolate Cake",
+    "description": "Rich and moist chocolate cake topped with ganache.",
+    "price": "120"
+  },
+  {
+    "title": "Strawberry Cheesecake",
+    "description": "Creamy cheesecake with fresh strawberries and a graham cracker crust.",
+    "price": "150"
+  },
+  {
+    "title": "Croissant",
+    "description": "Flaky French pastry with a buttery center, perfect for breakfast.",
+    "price": "30"
+  },
+  {
+    "title": "Apple Pie",
+    "description": "Classic apple pie with cinnamon-spiced apples and a golden crust.",
+    "price": "100"
+  }
+]

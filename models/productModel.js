@@ -14,6 +14,7 @@ class Product {
   save() {
     Product.fetchAll((data) => {
       const products = data;
+      this.id = 10e6 + products.length;
       products.push(this);
       writeFile(dataPath, JSON.stringify(products), (err) => {
         if (err) {

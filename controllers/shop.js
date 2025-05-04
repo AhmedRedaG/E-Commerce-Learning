@@ -1,13 +1,52 @@
-const getCart = (req, res) => {
-  const cart = [];
+import Cart from "../models/cartModel.js";
+
+export const getCart = (req, res) => {
+  const cartItems = Cart.fetchAll();
+  const totalPrice = Cart.getTotalPrice();
   res.render("user/cart", {
     pageTitle: "Your Cart",
     currentPath: "/cart",
-    cart: cart,
+    products: cartItems,
+    totalPrice: totalPrice,
   });
 };
 
-const getCheckout = (req, res) => {
+export const postCart = (req, res) => {
+  const productId = req.body.productId;
+  Cart.addItem(productId);
+  res.redirect("/products");
+};
+
+export const postAddToCart = (req, res) => {
+  const productId = req.body.productId;
+  Cart.addItem(productId);
+  res.redirect("/products");
+};
+
+export const postIncreaseCart = (req, res) => {
+  const productId = req.body.productId;
+  Cart.increaseItem(productId);
+  res.redirect("/cart");
+};
+
+export const postDecreaseCart = (req, res) => {
+  const productId = req.body.productId;
+  Cart.decreaseItem(productId);
+  res.redirect("/cart");
+};
+
+export const postRemoveFromCart = (req, res) => {
+  const productId = req.body.productId;
+  Cart.removeItem(productId);
+  res.redirect("/cart");
+};
+
+export const postClearCart = (req, res) => {
+  Cart.clear();
+  res.redirect("/cart");
+};
+
+export const getCheckout = (req, res) => {
   const cart = [];
   res.render("user/checkout", {
     pageTitle: "Checkout",
@@ -15,5 +54,3 @@ const getCheckout = (req, res) => {
     cart: cart,
   });
 };
-
-export { getCart, getCheckout };

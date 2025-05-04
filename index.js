@@ -19,7 +19,7 @@ app.use(express.static(path("public")));
 
 app.use("/admin", adminRoutes);
 app.use("/products", productsRoutes);
-app.use(cartRoutes);
+app.use("/cart", cartRoutes);
 app.use(checkoutRoutes);
 app.use(rootRoutes);
 app.use(errorRoutes);

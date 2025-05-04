@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path("public")));
 
 app.use("/admin", adminRoutes);
-app.use(productsRoutes);
+app.use("/products", productsRoutes);
 app.use(cartRoutes);
 app.use(checkoutRoutes);
 app.use(rootRoutes);

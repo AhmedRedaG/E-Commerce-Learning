@@ -32,6 +32,17 @@ class Product {
       callback(JSON.parse(data));
     });
   }
+
+  static findById(id, callback) {
+    Product.fetchAll((products) => {
+      const product = products.find((p) => p.id == id);
+      if (product) {
+        callback(product);
+      } else {
+        callback(null);
+      }
+    });
+  }
 }
 
 export default Product;

@@ -34,4 +34,21 @@ const getAdminProducts = (req, res) => {
   });
 };
 
-export { getAddProduct, postAddProduct, getProducts, getAdminProducts };
+const getProductById = (req, res) => {
+  const productId = req.params.productId;
+  Product.findById(productId, (product) => {
+    res.render("user/product-detail", {
+      pageTitle: product.title,
+      currentPath: "/products",
+      product: product,
+    });
+  });
+};
+
+export {
+  getAddProduct,
+  postAddProduct,
+  getProducts,
+  getAdminProducts,
+  getProductById,
+};

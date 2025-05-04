@@ -1,0 +1,41 @@
+main .products .product {
+  background-color: #fff;
+  color: #333;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+main .products .product img {
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+main .products .product h2 {
+  margin: 1rem 0;
+}
+
+main .products .product p {
+  margin-bottom: 1rem;
+}
+
+main .products .product .price {
+  font-weight: bold;
+}
+
+main .products .product button {
+  padding: 10px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+main .products .product button:hover {
+  background-color: #ccc;
+  color: #333;
+}

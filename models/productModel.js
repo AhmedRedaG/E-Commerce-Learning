@@ -6,6 +6,7 @@ const dataPath = path("data", "products.json");
 
 class Product {
   constructor(title, description, price) {
+    this.id = Date.now();
     this.title = title;
     this.description = description;
     this.price = price;
@@ -14,7 +15,6 @@ class Product {
   save() {
     Product.fetchAll((data) => {
       const products = data;
-      this.id = 10e6 + products.length;
       products.push(this);
       writeFile(dataPath, JSON.stringify(products), (err) => {
         if (err) {

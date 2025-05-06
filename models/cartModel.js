@@ -22,9 +22,7 @@ class Cart {
     this.fetchAll((data) => {
       Product.findById(productId, (productData) => {
         let cartProducts = data;
-        const crrProduct = cartProducts.findIndex(
-          (product) => product.id == productId
-        );
+        const crrProduct = cartProducts.findIndex((p) => p.id == productId);
 
         if (crrProduct === -1) {
           cartProducts.push({
@@ -36,11 +34,7 @@ class Cart {
         } else {
           cartProducts[crrProduct].count++;
         }
-        writeFile(dataPath, JSON.stringify(cartProducts), (err) => {
-          if (err) {
-            console.error("Error writing file", err);
-          }
-        });
+        this.rewriteCart(cartProducts);
       });
     });
   }
@@ -48,17 +42,11 @@ class Cart {
   static decreaseItem(productId) {
     this.fetchAll((data) => {
       let cartProducts = data;
-      const productIndex = cartProducts.findIndex(
-        (product) => product.id == productId
-      );
+      const productIndex = cartProducts.findIndex((p) => p.id == productId);
       const crrProduct = cartProducts[productIndex];
       if (crrProduct.count > 1) {
         crrProduct.count--;
-        writeFile(dataPath, JSON.stringify(cartProducts), (err) => {
-          if (err) {
-            console.error("Error writing file", err);
-          }
-        });
+        this.rewriteCart(cartProducts);
       } else {
         this.removeItem(crrProduct.id);
       }
@@ -69,25 +57,25 @@ class Cart {
     this.fetchAll((data) => {
       let items = data;
       items = items.filter((item) => productId !== item.id);
-      writeFile(dataPath, JSON.stringify(items), (err) => {
-        if (err) {
-          console.error("Error writing file", err);
-        }
-      });
+      this.rewriteCart(items);
     });
   }
 
   static clear() {
-    writeFile(dataPath, JSON.stringify([]), (err) => {
-      if (err) {
-        console.error("Error writing file", err);
-      }
-    });
+    this.rewriteCart([]);
   }
 
   static getTotalPrice(cartItems) {
     const total = cartItems.reduce((a, e) => a + e.price * e.count, 0);
     return total;
+  }
+
+  static rewriteCart(data) {
+    writeFile(dataPath, JSON.stringify(data), (err) => {
+      if (err) {
+        console.error("Error writing file", err);
+      }
+    });
   }
 }
 

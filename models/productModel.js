@@ -35,7 +35,7 @@ class Product {
   static deleteProduct(productId) {
     this.fetchAll((data) => {
       let products = data;
-      products = products.filter((product) => productId !== product.id);
+      products = products.filter((product) => productId != product.id);
 
       writeFile(dataPath, JSON.stringify(products), (err) => {
         if (err) {

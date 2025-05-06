@@ -12,7 +12,7 @@ export const postAddProduct = (req, res) => {
   const { id = null, title, description, price } = req.body;
   const newProduct = new Product(id, title, description, price);
   newProduct.save();
-  res.redirect("/products");
+  res.redirect("/admin/products");
 };
 
 export const getEditProduct = (req, res) => {
@@ -29,8 +29,9 @@ export const getEditProduct = (req, res) => {
 
 export const postDeleteProduct = (req, res) => {
   const productId = req.body.id;
+  console.log(productId);
   Product.deleteProduct(productId);
-  res.redirect("/products");
+  res.redirect("/admin/products");
 };
 
 export const getProducts = (req, res) => {

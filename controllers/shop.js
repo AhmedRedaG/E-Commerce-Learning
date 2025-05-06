@@ -1,13 +1,14 @@
 import Cart from "../models/cartModel.js";
 
 export const getCart = (req, res) => {
-  const cartItems = Cart.fetchAll();
-  const totalPrice = Cart.getTotalPrice();
-  res.render("user/cart", {
-    pageTitle: "Your Cart",
-    currentPath: "/cart",
-    products: cartItems,
-    totalPrice: totalPrice,
+  Cart.fetchAll((cartItems) => {
+    // const totalPrice = Cart.getTotalPrice();
+    res.render("user/cart", {
+      pageTitle: "Your Cart",
+      currentPath: "/cart",
+      products: cartItems,
+      totalPrice: 100,
+    });
   });
 };
 
@@ -25,7 +26,7 @@ export const postAddToCart = (req, res) => {
 
 export const postIncreaseCart = (req, res) => {
   const productId = req.body.productId;
-  Cart.increaseItem(productId);
+  Cart.addItem(productId);
   res.redirect("/cart");
 };
 

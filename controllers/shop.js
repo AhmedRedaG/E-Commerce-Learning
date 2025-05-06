@@ -2,12 +2,12 @@ import Cart from "../models/cartModel.js";
 
 export const getCart = (req, res) => {
   Cart.fetchAll((cartItems) => {
-    // const totalPrice = Cart.getTotalPrice();
+    const totalPrice = Cart.getTotalPrice(cartItems);
     res.render("user/cart", {
       pageTitle: "Your Cart",
       currentPath: "/cart",
       products: cartItems,
-      totalPrice: 100,
+      totalPrice: totalPrice,
     });
   });
 };

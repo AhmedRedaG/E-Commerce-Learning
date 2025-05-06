@@ -3,29 +3,20 @@ import Product from "./productModel.js";
 import { readFile, writeFile } from "fs";
 
 import path from "../util/pathResolver.js";
-import { compile } from "ejs";
 
 const dataPath = path("data", "cart.json");
-const pricePath = path("data", "totalPrice.json");
+
 class Cart {
-  static total = 0;
-
-  // static fetchAll() {
-  //   return [...this.items.values()];
-  // }
-
-  // static updateTotal(update) {
-  //   readFile(pricePath, "utf-8", (err, data) => {
-  //     let oldTotal = JSON.parse(data);
-  //     let newTotal = Number(oldTotal.total) + update;
-  //     const updatedData = { total: newTotal };
-  //     writeFile(pricePath, JSON.stringify(updatedData), (err) => {
-  //       if (err) {
-  //         console.error("Error writing file", err);
-  //       }
-  //     });
-  //   });
-  // }
+  static fetchAll(callback) {
+    readFile(dataPath, "utf-8", (err, data) => {
+      if (err) {
+        console.error("Error reading file:", err);
+        callback([]);
+      } else {
+        callback(JSON.parse(data));
+      }
+    });
+  }
 
   static addItem(productId) {
     this.fetchAll((data) => {
@@ -51,17 +42,6 @@ class Cart {
           }
         });
       });
-    });
-  }
-
-  static fetchAll(callback) {
-    readFile(dataPath, "utf-8", (err, data) => {
-      if (err) {
-        console.error("Error reading file:", err);
-        callback([]);
-      } else {
-        callback(JSON.parse(data));
-      }
     });
   }
 
@@ -105,9 +85,10 @@ class Cart {
     });
   }
 
-  // static getTotalPrice() {
-  //   return this.total;
-  // }
+  static getTotalPrice(cartItems) {
+    const total = cartItems.reduce((a, e) => a + e.price * e.count, 0);
+    return total;
+  }
 }
 
 export default Cart;

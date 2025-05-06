@@ -39,7 +39,7 @@ export const postDeleteProduct = (req, res) => {
 
 export const getProducts = (req, res) => {
   Product.fetchAll((products) => {
-    res.render("user/products", {
+    res.render("shop/products", {
       pageTitle: "All Products",
       currentPath: "/products",
       products: products,
@@ -60,7 +60,7 @@ export const getAdminProducts = (req, res) => {
 export const getProductById = (req, res) => {
   const productId = req.params.productId;
   Product.findById(productId, (product) => {
-    res.render("user/product-detail", {
+    res.render("shop/product-detail", {
       pageTitle: product.title,
       currentPath: "/products",
       product: product,

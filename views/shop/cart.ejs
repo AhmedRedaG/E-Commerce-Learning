@@ -1,5 +1,6 @@
 <%- include('../includes/header') %>
   <link rel='stylesheet' href='/css/all-products.css'>
+  <link rel='stylesheet' href='/css/cart.css'>
   </head>
 
   <body>
@@ -34,15 +35,17 @@
         <% } %>
       </div>
       <h2>Total Price: $<%= totalPrice %></h2>
-      <form action="/checkout" method="POST">
-        <button type="submit">Checkout</button>
-      </form>
-      <form action="/cart/clear" method="POST">
-        <button type="submit">Clear Cart</button>
-      </form>
-      <form action="/products" method="GET">
-        <button type="submit">Continue Shopping</button>
-      </form>
+      <div class="cart-controls">
+        <form action="/checkout" method="get">
+          <button type="submit">Checkout</button>
+        </form>
+        <form action="/cart/clear" method="POST">
+          <button type="submit">Clear Cart</button>
+        </form>
+        <form action="/products" method="GET">
+          <button type="submit">Continue Shopping</button>
+        </form>
+      </div>
       <% } %>
     </main>
   </body>

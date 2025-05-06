@@ -3,7 +3,7 @@ import Cart from "../models/cartModel.js";
 export const getCart = (req, res) => {
   Cart.fetchAll((cartItems) => {
     const totalPrice = Cart.getTotalPrice(cartItems);
-    res.render("user/cart", {
+    res.render("shop/cart", {
       pageTitle: "Your Cart",
       currentPath: "/cart",
       products: cartItems,
@@ -49,7 +49,7 @@ export const postClearCart = (req, res) => {
 
 export const getCheckout = (req, res) => {
   const cart = [];
-  res.render("user/checkout", {
+  res.render("shop/checkout", {
     pageTitle: "Checkout",
     currentPath: "/checkout",
     cart: cart,

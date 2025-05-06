@@ -18,9 +18,13 @@
           <div class="product">
             <img src="https://picsum.photos/200" alt="Product" />
             <h2><%= product.title %></h2>
-            <p><%= product.description %></p>
             <p>Price: $<%= product.price %></p>
-            <button>Add to Cart</button>
+            <button><a href="/products/<%= product.id %>">View Details</a></button>
+            <button><a href="/admin/edit-product/<%= product.id %>">Edit</a></button>
+            <form action="/admin/delete-product" method="post" >
+              <input type="hidden" name="id" value="<%= product.id %>"/>
+              <button type="submit">Delete</button>
+            </form>
           </div>
         <% } %>
       </div>

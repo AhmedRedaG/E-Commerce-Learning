@@ -1,20 +1,39 @@
 import Product from "../models/productModel.js";
 
-const getAddProduct = (req, res) => {
-  res.render("admin/add-product", {
+export const getAddProduct = (req, res) => {
+  res.render("admin/manage-product", {
     pageTitle: "Add Product",
     currentPath: "/admin/add-product",
+    edit: false,
   });
 };
 
-const postAddProduct = (req, res) => {
-  const { title, description, price } = req.body;
-  const newProduct = new Product(title, description, price);
+export const postAddProduct = (req, res) => {
+  const { id = null, title, description, price } = req.body;
+  const newProduct = new Product(id, title, description, price);
   newProduct.save();
   res.redirect("/products");
 };
 
-const getProducts = (req, res) => {
+export const getEditProduct = (req, res) => {
+  const productId = req.params.productId;
+  Product.findById(productId, (product) => {
+    res.render("admin/manage-product", {
+      pageTitle: "Edit " + product.title,
+      currentPath: "admin/add-product",
+      product: product,
+      edit: true,
+    });
+  });
+};
+
+export const postDeleteProduct = (req, res) => {
+  const productId = req.body.id;
+  Product.deleteProduct(productId);
+  res.redirect("/products");
+};
+
+export const getProducts = (req, res) => {
   Product.fetchAll((products) => {
     res.render("user/products", {
       pageTitle: "All Products",
@@ -24,7 +43,7 @@ const getProducts = (req, res) => {
   });
 };
 
-const getAdminProducts = (req, res) => {
+export const getAdminProducts = (req, res) => {
   Product.fetchAll((products) => {
     res.render("admin/products", {
       pageTitle: "Admin Products",
@@ -34,7 +53,7 @@ const getAdminProducts = (req, res) => {
   });
 };
 
-const getProductById = (req, res) => {
+export const getProductById = (req, res) => {
   const productId = req.params.productId;
   Product.findById(productId, (product) => {
     res.render("user/product-detail", {
@@ -43,12 +62,4 @@ const getProductById = (req, res) => {
       product: product,
     });
   });
-};
-
-export {
-  getAddProduct,
-  postAddProduct,
-  getProducts,
-  getAdminProducts,
-  getProductById,
 };

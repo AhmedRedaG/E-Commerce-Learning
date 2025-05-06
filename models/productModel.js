@@ -5,8 +5,8 @@ import path from "../util/pathResolver.js";
 const dataPath = path("data", "products.json");
 
 class Product {
-  constructor(title, description, price) {
-    this.id = Date.now();
+  constructor(id, title, description, price) {
+    this.id = id;
     this.title = title;
     this.description = description;
     this.price = price;
@@ -14,8 +14,29 @@ class Product {
 
   save() {
     Product.fetchAll((data) => {
-      const products = data;
-      products.push(this);
+      let products = data;
+      if (this.id) {
+        products = products.map((product) => {
+          if (this.id == product.id) return this;
+          else return product;
+        });
+      } else {
+        this.id = Date.now();
+        products.push(this);
+      }
+      writeFile(dataPath, JSON.stringify(products), (err) => {
+        if (err) {
+          console.error("Error writing file", err);
+        }
+      });
+    });
+  }
+
+  static deleteProduct(productId) {
+    this.fetchAll((data) => {
+      let products = data;
+      products = products.filter((product) => productId !== product.id);
+
       writeFile(dataPath, JSON.stringify(products), (err) => {
         if (err) {
           console.error("Error writing file", err);

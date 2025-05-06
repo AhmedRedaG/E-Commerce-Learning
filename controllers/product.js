@@ -1,4 +1,5 @@
 import Product from "../models/productModel.js";
+import Cart from "../models/cartModel.js";
 
 export const getAddProduct = (req, res) => {
   res.render("admin/manage-product", {
@@ -12,6 +13,7 @@ export const postAddProduct = (req, res) => {
   const { id = null, title, description, price } = req.body;
   const newProduct = new Product(id, title, description, price);
   newProduct.save();
+  Cart.updateItem(id, title, price);
   res.redirect("/admin/products");
 };
 
@@ -31,6 +33,7 @@ export const postDeleteProduct = (req, res) => {
   const productId = req.body.id;
   console.log(productId);
   Product.deleteProduct(productId);
+  Cart.removeItem(productId);
   res.redirect("/admin/products");
 };
 

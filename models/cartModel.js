@@ -70,6 +70,21 @@ class Cart {
     return total;
   }
 
+  static updateItem(id, title, price) {
+    if (id) {
+      this.fetchAll((data) => {
+        const items = data;
+        items.forEach((item, index) => {
+          if (id == item.id) {
+            items[index].title = title;
+            items[index].price = price;
+          }
+        });
+        this.rewriteCart(items);
+      });
+    }
+  }
+
   static rewriteCart(data) {
     writeFile(dataPath, JSON.stringify(data), (err) => {
       if (err) {

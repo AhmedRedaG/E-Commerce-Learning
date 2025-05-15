@@ -9,6 +9,8 @@ import checkoutRoutes from "./routers/checkout.js";
 
 import path from "./util/pathResolver.js";
 
+import { connectDb } from "./util/databaseConnector.js";
+
 const app = express();
 
 app.set("view engine", "ejs");
@@ -24,9 +26,9 @@ app.use(checkoutRoutes);
 app.use(rootRoutes);
 app.use(errorRoutes);
 
-const PORT = 3000;
-app.listen(PORT, (err) => {
-  console.log(
-    err ? `server error ${err.message}` : `server is running on port ${PORT}`
-  );
+connectDb((dbErr) => {
+  app.listen(3000, (sErr) => {
+    if (sErr || dbErr) throw sErr || dbErr;
+    console.log("database connected, server is running on port 3000");
+  });
 });

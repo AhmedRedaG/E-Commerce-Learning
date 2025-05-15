@@ -1,6 +1,10 @@
 import Product from "../models/productModel.js";
 import Cart from "../models/cartModel.js";
 
+import { ObjectId } from "mongodb";
+
+const tempId = new ObjectId("68261320cd1cead4b36d0bf3");
+
 export const getProducts = (req, res) => {
   Product.getAllProducts()
     .then((products) => {
@@ -61,7 +65,6 @@ export const postAddProduct = (req, res) => {
     .catch((err) => {
       res.render("error", { pageTitle: "Error", currentPath: "", error: err });
     });
-  // Cart.updateItem(id, title, price);
 };
 
 export const getEditProduct = (req, res) => {
@@ -81,24 +84,36 @@ export const getEditProduct = (req, res) => {
 };
 
 export const postEditProduct = (req, res) => {
-  Product.editProduct(req.params.productId, req.body)
+  const product = req.body;
+  const productId = req.params.productId;
+  Product.editProduct(productId, product)
     .then(() => {
-      res.redirect("/admin/products");
+      Cart.updateItem(tempId, productId, product)
+        .then(() => {
+          res.redirect("/admin/products");
+        })
+        .catch((err) => {
+          res.render("error", { pageTitle: "Error", currentPath: "", err });
+        });
     })
     .catch((err) => {
       res.render("error", { pageTitle: "Error", currentPath: "", err });
     });
-  // Cart.updateItem(id, title, price);
 };
 
 export const postDeleteProduct = (req, res) => {
   const productId = req.body._id;
   Product.deleteProduct(productId)
     .then(() => {
-      res.redirect("/admin/products");
+      Cart.removeItem(tempId, productId)
+        .then(() => {
+          res.redirect("/admin/products");
+        })
+        .catch((err) => {
+          res.render("error", { pageTitle: "Error", currentPath: "", err });
+        });
     })
     .catch((err) => {
       res.render("error", { pageTitle: "Error", currentPath: "", err });
     });
-  // Cart.removeItem(productId);
 };

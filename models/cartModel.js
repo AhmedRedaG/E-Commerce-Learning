@@ -1,96 +1,144 @@
 import Product from "./productModel.js";
 
-import { readFile, writeFile } from "fs";
+import { ObjectId } from "mongodb";
 
-import path from "../util/pathResolver.js";
-
-const dataPath = path("data", "cart.json");
+import { getDb as db } from "../util/databaseConnector.js";
 
 class Cart {
-  static fetchAll(callback) {
-    readFile(dataPath, "utf-8", (err, data) => {
-      if (err) {
-        console.error("Error reading file:", err);
-        callback([]);
-      } else {
-        callback(JSON.parse(data));
-      }
-    });
-  }
-
-  static addItem(productId) {
-    this.fetchAll((data) => {
-      Product.findById(productId, (productData) => {
-        let cartProducts = data;
-        const crrProduct = cartProducts.findIndex((p) => p.id == productId);
-
-        if (crrProduct === -1) {
-          cartProducts.push({
-            id: productId,
-            title: productData.title,
-            price: productData.price,
-            count: 1,
-          });
-        } else {
-          cartProducts[crrProduct].count++;
-        }
-        this.rewriteCart(cartProducts);
-      });
-    });
-  }
-
-  static decreaseItem(productId) {
-    this.fetchAll((data) => {
-      let cartProducts = data;
-      const productIndex = cartProducts.findIndex((p) => p.id == productId);
-      const crrProduct = cartProducts[productIndex];
-      if (crrProduct.count > 1) {
-        crrProduct.count--;
-        this.rewriteCart(cartProducts);
-      } else {
-        this.removeItem(crrProduct.id);
-      }
-    });
-  }
-
-  static removeItem(productId) {
-    this.fetchAll((data) => {
-      let items = data;
-      items = items.filter((item) => productId !== item.id);
-      this.rewriteCart(items);
-    });
-  }
-
-  static clear() {
-    this.rewriteCart([]);
-  }
-
-  static getTotalPrice(cartItems) {
-    const total = cartItems.reduce((a, e) => a + e.price * e.count, 0);
-    return total;
-  }
-
-  static updateItem(id, title, price) {
-    if (id) {
-      this.fetchAll((data) => {
-        const items = data;
-        items.forEach((item, index) => {
-          if (id == item.id) {
-            items[index].title = title;
-            items[index].price = price;
-          }
-        });
-        this.rewriteCart(items);
-      });
+  static checkId(id) {
+    if (!ObjectId.isValid(id)) {
+      return false;
     }
+    return new ObjectId(id);
   }
 
-  static rewriteCart(data) {
-    writeFile(dataPath, JSON.stringify(data), (err) => {
-      if (err) {
-        console.error("Error writing file", err);
-      }
-    });
+  static getCart(userId) {
+    const checkedId = this.checkId(userId);
+    if (!checkedId) {
+      return Promise.reject(new Error("Invalid id"));
+    }
+    return db()
+      .collection("users")
+      .findOne({ _id: checkedId })
+      .then((user) => {
+        return user.cart;
+      });
+  }
+
+  static addItem(userId, productId) {
+    const checkedUserId = this.checkId(userId);
+    const checkedProductId = this.checkId(productId);
+    if (!checkedProductId || !checkedUserId) {
+      return Promise.reject(new Error("Invalid id"));
+    }
+    return Product.getProduct(checkedProductId)
+      .then((productData) => {
+        return db()
+          .collection("users")
+          .findOne({ _id: checkedUserId, "cart.id": productId })
+          .then((product) => {
+            if (product) {
+              return Cart.recountItem(userId, productId, 1);
+            }
+            return db()
+              .collection("users")
+              .updateOne(
+                { _id: checkedUserId },
+                {
+                  $push: {
+                    cart: {
+                      id: productId,
+                      title: productData.title,
+                      price: productData.price,
+                      count: 1,
+                    },
+                  },
+                }
+              );
+          });
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      });
+  }
+
+  static recountItem(userId, productId, count) {
+    const checkedUserId = this.checkId(userId);
+    const checkedProductId = this.checkId(productId);
+    if (!checkedProductId || !checkedUserId) {
+      return Promise.reject(new Error("Invalid id"));
+    }
+    return db()
+      .collection("users")
+      .findOne({ _id: checkedUserId })
+      .then((product) => {
+        const indexToUpdate = product.cart.findIndex((e) => e.id === productId);
+        if (product.cart[indexToUpdate].count + count <= 0) {
+          return Cart.removeItem(userId, productId);
+        }
+        return db()
+          .collection("users")
+          .updateOne(
+            { _id: checkedUserId, "cart.id": productId },
+            { $inc: { "cart.$.count": count } }
+          );
+      });
+  }
+
+  static removeItem(userId, productId) {
+    const checkedUserId = this.checkId(userId);
+    const checkedProductId = this.checkId(productId);
+    if (!checkedProductId || !checkedUserId) {
+      return Promise.reject(new Error("Invalid id"));
+    }
+    return db()
+      .collection("users")
+      .updateOne(
+        { _id: checkedUserId },
+        { $pull: { cart: { id: productId } } }
+      );
+  }
+
+  static clear(userId) {
+    const checkedUserId = this.checkId(userId);
+    if (!checkedUserId) {
+      return Promise.reject(new Error("Invalid id"));
+    }
+    return db()
+      .collection("users")
+      .updateOne({ _id: checkedUserId }, { $set: { cart: [] } });
+  }
+
+  static getTotalPrice(userId) {
+    const checkedUserId = this.checkId(userId);
+    if (!checkedUserId) {
+      return Promise.reject(new Error("Invalid id"));
+    }
+    return db()
+      .collection("users")
+      .findOne({ _id: checkedUserId })
+      .then((user) => {
+        return user.cart.reduce((a, e) => a + e.price * e.count, 0);
+      });
+  }
+
+  static updateItem(userId, productId, productData) {
+    const checkedUserId = this.checkId(userId);
+    const checkedProductId = this.checkId(productId);
+    if (!checkedProductId || !checkedUserId) {
+      return Promise.reject(new Error("Invalid id"));
+    }
+    return db()
+      .collection("users")
+      .updateOne(
+        { _id: checkedUserId, "cart.id": productId },
+        {
+          $set: {
+            "cart.$.title": productData.title,
+            "cart.$.price": productData.price,
+          },
+        }
+      );
   }
 }
 

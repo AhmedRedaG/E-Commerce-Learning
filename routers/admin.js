@@ -10,7 +10,7 @@ router.post("/add-product", productController.postAddProduct);
 
 router.get("/edit-product/:productId", productController.getEditProduct);
 
-router.post("/edit-product", productController.postAddProduct);
+router.post("/edit-product/:productId", productController.postEditProduct);
 
 router.post("/delete-product", productController.postDeleteProduct);
 

@@ -1,69 +1,65 @@
-import { readFile, writeFile } from "fs";
+import { getDb as db } from "../util/databaseConnector.js";
 
-import path from "../util/pathResolver.js";
-
-const dataPath = path("data", "products.json");
+import { ObjectId } from "mongodb";
 
 class Product {
-  constructor(id, title, description, price) {
-    this.id = id;
-    this.title = title;
-    this.description = description;
-    this.price = price;
+  static checkId(id) {
+    if (!ObjectId.isValid(id)) {
+      return false;
+    }
+    return new ObjectId(id);
   }
 
-  save() {
-    Product.fetchAll((data) => {
-      let products = data;
-      if (this.id) {
-        products = products.map((product) => {
-          if (this.id == product.id) return this;
-          else return product;
-        });
-      } else {
-        this.id = Date.now();
-        products.push(this);
-      }
-      writeFile(dataPath, JSON.stringify(products), (err) => {
-        if (err) {
-          console.error("Error writing file", err);
-        }
-      });
-    });
+  static checkProduct(product) {
+    if (!product.title || !product.description || !product.price) {
+      return false;
+    }
+    return {
+      title: product.title,
+      description: product.description,
+      price: product.price,
+    };
   }
 
-  static deleteProduct(productId) {
-    this.fetchAll((data) => {
-      let products = data;
-      products = products.filter((product) => productId != product.id);
-
-      writeFile(dataPath, JSON.stringify(products), (err) => {
-        if (err) {
-          console.error("Error writing file", err);
-        }
-      });
-    });
+  static getAllProducts() {
+    return db().collection("products").find().toArray();
   }
 
-  static fetchAll(callback) {
-    readFile(dataPath, "utf-8", (err, data) => {
-      if (err) {
-        console.error("Error reading file:", err);
-        return callback([]);
-      }
-      callback(JSON.parse(data));
-    });
+  static getProduct(id) {
+    const checkedId = this.checkId(id);
+    if (!checkedId) {
+      return Promise.reject(new Error("Invalid id"));
+    }
+    return db().collection("products").findOne({ _id: checkedId });
   }
 
-  static findById(id, callback) {
-    Product.fetchAll((products) => {
-      const product = products.find((p) => p.id == id);
-      if (product) {
-        callback(product);
-      } else {
-        callback(null);
-      }
-    });
+  static addProduct(product) {
+    const checkedProduct = this.checkProduct(product);
+    if (!checkedProduct) {
+      return Promise.reject(new Error("Invalid product"));
+    }
+    return db().collection("products").insertOne(checkedProduct);
+  }
+
+  static editProduct(id, product) {
+    const checkedId = this.checkId(id);
+    const checkedProduct = this.checkProduct(product);
+    if (!checkedProduct || !checkedId) {
+      return Promise.reject(
+        new Error("Invalid { !checkedId ? 'id' : 'product' }")
+      );
+    }
+    return db()
+      .collection("products")
+      .updateOne({ _id: checkedId }, { $set: checkedProduct });
+  }
+
+  static deleteProduct(id) {
+    const checkedId = this.checkId(id);
+    if (!checkedId) {
+      return Promise.reject(new Error("Invalid id"));
+    }
+    return db().collection("products").deleteOne({ _id: checkedId });
   }
 }
 

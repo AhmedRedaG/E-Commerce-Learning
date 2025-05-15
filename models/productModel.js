@@ -15,17 +15,27 @@ class Product {
       });
   }
 
-  static deleteProduct(productId) {
+  static editProduct(id, product) {
+    db()
+      .collection("products")
+      .updateOne({ _id: new ObjectId(id) }, { $set: product })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        console.error("Error editing product", err);
+      });
+  }
+
+  static deleteProduct(id) {
     db()
       .collection("products")
       .deleteOne({ _id: new ObjectId(id) })
       .then((data) => {
         console.log(data);
-        callback(data);
       })
       .catch((err) => {
         console.error("Error fetching products", err);
-        callback([]);
       });
   }
 

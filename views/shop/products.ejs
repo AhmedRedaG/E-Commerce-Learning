@@ -19,9 +19,9 @@
             <img src="https://picsum.photos/200" alt="Product" />
             <h2><%= product.title %></h2>
             <p>Price: $<%= product.price %></p>
-            <button><a href="/products/<%= product.id %>">View Details</a></button>
+            <button><a href="/products/<%= product._id %>">View Details</a></button>
             <form action="/cart" method="POST">
-              <input type="hidden" name="productId" value="<%= product.id %>">
+              <input type="hidden" name="productId" value="<%= product._id %>">
               <button type="submit">Add to Cart</button>
             </form>
           </div>

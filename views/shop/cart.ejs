@@ -20,15 +20,15 @@
             <p>Count: <%= product.count %></p>
             <p>Total: $<%= product.price * product.count %></p>
             <form action="/cart/increase" method="POST">
-              <input type="hidden" name="productId" value="<%= product.id %>">
+              <input type="hidden" name="productId" value="<%= product._id %>">
               <button type="submit">+1</button>
             </form>
             <form action="/cart/decrease" method="POST">
-              <input type="hidden" name="productId" value="<%= product.id %>">
+              <input type="hidden" name="productId" value="<%= product_id %>">
               <button type="submit">-1</button>
             </form>
             <form action="/cart/remove" method="POST">
-              <input type="hidden" name="productId" value="<%= product.id %>">
+              <input type="hidden" name="productId" value="<%= product._id %>">
               <button type="submit">Delete</button>
             </form>
           </div>

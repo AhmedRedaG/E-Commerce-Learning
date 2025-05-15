@@ -7,7 +7,7 @@
 
     <main>
       <h2><% if (edit) { %>Edit Product<% } else { %>Add Product<% } %></h2>
-      <form action="/admin/<% if (edit) {%>add-product<% } else { %>edit-product<% } %>" method="POST">
+      <form action="/admin/<% if (edit) {%>edit-product/<%= product._id %><% } else { %>add-product<% } %>" method="POST">
         <div>
           <label for="title">Title</label>
           <input type="text" id="title" name="title" required value="<% if (edit) {%><%= product.title %><% } %>"/>
@@ -20,7 +20,6 @@
           <label for="description">Description</label>
           <textarea id="description" name="description" required><% if (edit) {%><%= product.description %><% } %></textarea>
         </div>
-        <input type="hidden" name="id" value="<% if (edit) {%><%= product.id %><% } %>"/>
         <button type="submit"><% if (edit) { %>Edit Product<% } else { %>Add Product<% } %></button>
       </form>
     </main>

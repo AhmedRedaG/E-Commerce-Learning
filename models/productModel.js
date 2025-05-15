@@ -21,77 +21,45 @@ class Product {
     };
   }
 
-  static fetchAll(callback) {
-    db()
-      .collection("products")
-      .find()
-      .toArray()
-      .then((data) => {
-        callback(data);
-      })
-      .catch((err) => {
-        console.error("Error fetching products", err);
-        callback([]);
-      });
+  static getAllProducts() {
+    return db().collection("products").find().toArray();
   }
 
-  static findById(id, callback) {
+  static getProduct(id) {
     const checkedId = this.checkId(id);
     if (!checkedId) {
-      callback([]);
-      return;
+      return Promise.reject(new Error("Invalid id"));
     }
-    db()
-      .collection("products")
-      .findOne({ _id: checkedId })
-      .then((data) => {
-        callback(data);
-      })
-      .catch((err) => {
-        console.error("Error fetching products", err);
-        callback([]);
-      });
+    return db().collection("products").findOne({ _id: checkedId });
   }
 
   static addProduct(product) {
     const checkedProduct = this.checkProduct(product);
     if (!checkedProduct) {
-      return;
+      return Promise.reject(new Error("Invalid product"));
     }
-
-    db()
-      .collection("products")
-      .insertOne(checkedProduct)
-      .catch((err) => {
-        console.error("Error saving product", err);
-      });
+    return db().collection("products").insertOne(checkedProduct);
   }
 
   static editProduct(id, product) {
     const checkedId = this.checkId(id);
     const checkedProduct = this.checkProduct(product);
     if (!checkedProduct || !checkedId) {
-      return;
+      return Promise.reject(
+        new Error("Invalid { !checkedId ? 'id' : 'product' }")
+      );
     }
-    db()
+    return db()
       .collection("products")
-      .updateOne({ _id: checkedId }, { $set: checkedProduct })
-      .catch((err) => {
-        console.error("Error editing product", err);
-      });
+      .updateOne({ _id: checkedId }, { $set: checkedProduct });
   }
 
   static deleteProduct(id) {
     const checkedId = this.checkId(id);
     if (!checkedId) {
-      return;
+      return Promise.reject(new Error("Invalid id"));
     }
-    db()
-      .collection("products")
-      .deleteOne({ _id: checkedId })
-      .catch((err) => {
-        console.error("Error fetching products", err);
-      });
+    return db().collection("products").deleteOne({ _id: checkedId });
   }
 }
 

@@ -2,34 +2,46 @@ import Product from "../models/productModel.js";
 import Cart from "../models/cartModel.js";
 
 export const getProducts = (req, res) => {
-  Product.fetchAll((products) => {
-    res.render("shop/products", {
-      pageTitle: "All Products",
-      currentPath: "/products",
-      products: products,
+  Product.getAllProducts()
+    .then((products) => {
+      res.render("shop/products", {
+        pageTitle: "All Products",
+        currentPath: "/products",
+        products: products,
+      });
+    })
+    .catch((err) => {
+      res.render("error", { pageTitle: "Error", currentPath: "", err });
     });
-  });
 };
 
 export const getAdminProducts = (req, res) => {
-  Product.fetchAll((products) => {
-    res.render("admin/products", {
-      pageTitle: "Admin Products",
-      currentPath: "/admin/products",
-      products: products,
+  Product.getAllProducts()
+    .then((products) => {
+      res.render("admin/products", {
+        pageTitle: "Admin Products",
+        currentPath: "/admin/products",
+        products: products,
+      });
+    })
+    .catch((err) => {
+      res.render("error", { pageTitle: "Error", currentPath: "", err });
     });
-  });
 };
 
 export const getProductById = (req, res) => {
   const productId = req.params.productId;
-  Product.findById(productId, (product) => {
-    res.render("shop/product-detail", {
-      pageTitle: product.title,
-      currentPath: "/products",
-      product: product,
+  Product.getProduct(productId)
+    .then((product) => {
+      res.render("shop/product-detail", {
+        pageTitle: product.title,
+        currentPath: "/products",
+        product: product,
+      });
+    })
+    .catch((err) => {
+      res.render("error", { pageTitle: "Error", currentPath: "", err });
     });
-  });
 };
 
 export const getAddProduct = (req, res) => {
@@ -47,32 +59,46 @@ export const postAddProduct = (req, res) => {
       res.redirect("/admin/products");
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", error: err });
+      res.render("error", { pageTitle: "Error", currentPath: "", error: err });
     });
   // Cart.updateItem(id, title, price);
 };
 
 export const getEditProduct = (req, res) => {
   const productId = req.params.productId;
-  Product.findById(productId, (product) => {
-    res.render("admin/manage-product", {
-      pageTitle: "Edit " + product.title,
-      currentPath: "admin/add-product",
-      product: product,
-      edit: true,
+  Product.getProduct(productId)
+    .then((product) => {
+      res.render("admin/manage-product", {
+        pageTitle: "Edit " + product.title,
+        currentPath: "admin/add-product",
+        product: product,
+        edit: true,
+      });
+    })
+    .catch((err) => {
+      res.render("error", { pageTitle: "Error", currentPath: "", err });
     });
-  });
 };
 
 export const postEditProduct = (req, res) => {
-  Product.editProduct(req.params.productId, req.body);
+  Product.editProduct(req.params.productId, req.body)
+    .then(() => {
+      res.redirect("/admin/products");
+    })
+    .catch((err) => {
+      res.render("error", { pageTitle: "Error", currentPath: "", err });
+    });
   // Cart.updateItem(id, title, price);
-  res.redirect("/admin/products");
 };
 
 export const postDeleteProduct = (req, res) => {
   const productId = req.body._id;
-  Product.deleteProduct(productId);
+  Product.deleteProduct(productId)
+    .then(() => {
+      res.redirect("/admin/products");
+    })
+    .catch((err) => {
+      res.render("error", { pageTitle: "Error", currentPath: "", err });
+    });
   // Cart.removeItem(productId);
-  res.redirect("/admin/products");
 };

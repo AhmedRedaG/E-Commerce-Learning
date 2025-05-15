@@ -70,10 +70,19 @@ class Cart {
     }
     return db()
       .collection("users")
-      .updateOne(
-        { _id: checkedUserId, "cart.id": productId },
-        { $inc: { "cart.$.count": count } }
-      );
+      .findOne({ _id: checkedUserId })
+      .then((product) => {
+        const indexToUpdate = product.cart.findIndex((e) => e.id === productId);
+        if (product.cart[indexToUpdate].count + count <= 0) {
+          return Cart.removeItem(userId, productId);
+        }
+        return db()
+          .collection("users")
+          .updateOne(
+            { _id: checkedUserId, "cart.id": productId },
+            { $inc: { "cart.$.count": count } }
+          );
+      });
   }
 
   static removeItem(userId, productId) {
@@ -123,7 +132,12 @@ class Cart {
       .collection("users")
       .updateOne(
         { _id: checkedUserId, "cart.id": productId },
-        { $set: { "cart.$": productData } }
+        {
+          $set: {
+            "cart.$.title": productData.title,
+            "cart.$.price": productData.price,
+          },
+        }
       );
   }
 }

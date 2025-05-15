@@ -10,10 +10,8 @@ export const getAddProduct = (req, res) => {
 };
 
 export const postAddProduct = (req, res) => {
-  const { id = null, title, description, price } = req.body;
-  const newProduct = new Product(id, title, description, price);
-  newProduct.save();
-  Cart.updateItem(id, title, price);
+  Product.addProduct(req.body);
+  // Cart.updateItem(id, title, price);
   res.redirect("/admin/products");
 };
 

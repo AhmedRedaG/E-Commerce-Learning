@@ -8,6 +8,7 @@ import rootRoutes from "./routers/root.js";
 import errorRoutes from "./routers/error.js";
 import cartRoutes from "./routers/cart.js";
 import ordersRoutes from "./routers/orders.js";
+import authRoutes from "./routers/auth.js";
 
 import User from "./models/userModel.js";
 
@@ -36,6 +37,7 @@ app.use("/admin", adminRoutes);
 app.use("/products", productsRoutes);
 app.use("/cart", cartRoutes);
 app.use("/orders", ordersRoutes);
+app.use(authRoutes);
 app.use(rootRoutes);
 app.use(errorRoutes);
 

@@ -6,4 +6,6 @@ const router = Router();
 
 router.get("/checkout", shopController.getCheckout);
 
+router.post("/checkout", shopController.postCheckout);
+
 export default router;

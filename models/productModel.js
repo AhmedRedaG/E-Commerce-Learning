@@ -1,5 +1,3 @@
-import { getDb as db } from "../util/databaseConnector.js";
-
 import { ObjectId } from "mongodb";
 
 class Product {

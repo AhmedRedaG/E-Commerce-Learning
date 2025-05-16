@@ -1,9 +1,5 @@
 import Product from "./productModel.js";
 
-import { ObjectId } from "mongodb";
-
-import { getDb as db } from "../util/databaseConnector.js";
-
 class Cart {
   static checkId(id) {
     if (!ObjectId.isValid(id)) {

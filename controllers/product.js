@@ -1,9 +1,5 @@
 import Product from "../models/productModel.js";
-import Cart from "../models/cartModel.js";
-
-import { ObjectId } from "mongodb";
-
-const tempId = new ObjectId("68261320cd1cead4b36d0bf3");
+import User from "../models/userModel.js";
 
 export const getProducts = (req, res) => {
   Product.find()
@@ -90,14 +86,14 @@ export const postEditProduct = (req, res) => {
   const productId = req.params.productId;
   Product.findByIdAndUpdate(productId, product)
     .then(() => {
-      // Cart.updateItem(tempId, productId, product)
-      //   .then(() => {
-      //     res.redirect("/admin/products");
-      //   })
-      //   .catch((err) => {
-      //     res.render("error", { pageTitle: "Error", currentPath: "", err });
-      //   });
-      res.redirect("/admin/products");
+      req.user
+        .updateItem(productId, product)
+        .then(() => {
+          res.redirect("/admin/products");
+        })
+        .catch((err) => {
+          res.render("error", { pageTitle: "Error", currentPath: "", err });
+        });
     })
     .catch((err) => {
       res.render("error", { pageTitle: "Error", currentPath: "", err });
@@ -108,14 +104,14 @@ export const postDeleteProduct = (req, res) => {
   const productId = req.body._id;
   Product.findByIdAndDelete(productId)
     .then(() => {
-      // Cart.removeItem(tempId, productId)
-      //   .then(() => {
-      //     res.redirect("/admin/products");
-      //   })
-      //   .catch((err) => {
-      //     res.render("error", { pageTitle: "Error", currentPath: "", err });
-      //   });
-      res.redirect("/admin/products");
+      req.user
+        .removeItem(productId)
+        .then(() => {
+          res.redirect("/admin/products");
+        })
+        .catch((err) => {
+          res.render("error", { pageTitle: "Error", currentPath: "", err });
+        });
     })
     .catch((err) => {
       res.render("error", { pageTitle: "Error", currentPath: "", err });

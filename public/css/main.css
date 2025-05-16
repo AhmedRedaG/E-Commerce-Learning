@@ -26,6 +26,10 @@ header ul li a {
   padding: 10px 30px;
 }
 
+header ul li:last-child {
+  margin-left: auto;
+}
+
 header ul li .active,
 header ul li a:hover {
   background-color: #555;

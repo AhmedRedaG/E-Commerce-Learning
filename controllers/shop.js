@@ -1,44 +1,20 @@
-import Cart from "../models/cartModel.js";
-
-import { ObjectId } from "mongodb";
-
-const tempId = new ObjectId("68261320cd1cead4b36d0bf3");
+import Cart from "../models/userModel.js";
 
 export const getCart = (req, res) => {
-  Cart.getCart(tempId)
-    .then((cart) => {
-      Cart.getTotalPrice(tempId)
-        .then((totalPrice) => {
-          res.render("shop/cart", {
-            pageTitle: "Your Cart",
-            currentPath: "/cart",
-            products: cart,
-            totalPrice: totalPrice,
-          });
-        })
-        .catch((err) => {
-          res.render("error", { pageTitle: "Error", currentPath: "", err });
-        });
-    })
-    .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
-    });
+  const cart = req.user.getCart();
+  const totalPrice = req.user.getTotalPrice();
+  res.render("shop/cart", {
+    pageTitle: "Your Cart",
+    currentPath: "/cart",
+    products: cart,
+    totalPrice: totalPrice,
+  });
 };
 
 export const postCart = (req, res) => {
   const productId = req.body.productId;
-  Cart.addItem(tempId, productId)
-    .then(() => {
-      res.redirect("/products");
-    })
-    .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
-    });
-};
-
-export const postAddToCart = (req, res) => {
-  const productId = req.body.productId;
-  Cart.addItem(tempId, productId)
+  req.user
+    .addItem(productId)
     .then(() => {
       res.redirect("/products");
     })
@@ -49,7 +25,8 @@ export const postAddToCart = (req, res) => {
 
 export const postIncreaseCart = (req, res) => {
   const productId = req.body.productId;
-  Cart.recountItem(tempId, productId, 1)
+  req.user
+    .recountItem(productId, 1)
     .then(() => {
       res.redirect("/cart");
     })
@@ -60,7 +37,8 @@ export const postIncreaseCart = (req, res) => {
 
 export const postDecreaseCart = (req, res) => {
   const productId = req.body.productId;
-  Cart.recountItem(tempId, productId, -1)
+  req.user
+    .recountItem(productId, -1)
     .then(() => {
       res.redirect("/cart");
     })
@@ -71,7 +49,8 @@ export const postDecreaseCart = (req, res) => {
 
 export const postRemoveFromCart = (req, res) => {
   const productId = req.body.productId;
-  Cart.removeItem(tempId, productId)
+  req.user
+    .removeItem(productId)
     .then(() => {
       res.redirect("/cart");
     })
@@ -81,7 +60,8 @@ export const postRemoveFromCart = (req, res) => {
 };
 
 export const postClearCart = (req, res) => {
-  Cart.clear(tempId)
+  req.user
+    .clear()
     .then(() => {
       res.redirect("/cart");
     })

@@ -4,6 +4,8 @@ import * as shopController from "../controllers/shop.js";
 
 const router = Router();
 
-router.get("/checkout", shopController.getCheckout);
+router.get("/", shopController.getOrders);
+
+router.post("/", shopController.postOrders);
 
 export default router;

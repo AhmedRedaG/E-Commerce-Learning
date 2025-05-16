@@ -1,4 +1,4 @@
-import Cart from "../models/userModel.js";
+import Order from "../models/orderModel.js";
 
 export const getCart = (req, res) => {
   const cart = req.user.getCart();
@@ -61,7 +61,7 @@ export const postRemoveFromCart = (req, res) => {
 
 export const postClearCart = (req, res) => {
   req.user
-    .clear()
+    .clearCart()
     .then(() => {
       res.redirect("/cart");
     })
@@ -70,11 +70,37 @@ export const postClearCart = (req, res) => {
     });
 };
 
-export const getCheckout = (req, res) => {
-  const cart = [];
-  res.render("shop/checkout", {
-    pageTitle: "Checkout",
-    currentPath: "/checkout",
-    cart: cart,
+export const getOrders = (req, res) => {
+  const userId = req.user._id;
+  Order.find({ userId })
+    .then((orders) => {
+      res.render("shop/orders", {
+        pageTitle: "Your Orders",
+        currentPath: "/orders",
+        orders: orders,
+      });
+    })
+    .catch((err) => {
+      res.render("error", { pageTitle: "Error", currentPath: "", err });
+    });
+};
+
+export const postOrders = (req, res) => {
+  const userId = req.user._id;
+  const products = req.user.getCart();
+  const totalPrice = req.user.getTotalPrice();
+  const order = new Order({
+    userId,
+    products,
+    totalPrice,
   });
+  order
+    .save()
+    .then(() => {
+      req.user.clearCart();
+      res.redirect("/orders");
+    })
+    .catch((err) => {
+      res.render("error", { pageTitle: "Error", currentPath: "", err });
+    });
 };

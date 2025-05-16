@@ -1,0 +1,36 @@
+<%- include('../includes/header') %>
+<link rel='stylesheet' href='/css/orders.css'>
+</head>
+
+<body>
+  <%- include('../includes/navigation') %>
+
+  <main>
+    <h1>All Orders</h1>
+    <% if (orders.length === 0) { %>
+      <p>No orders found</p>
+    <% } %>
+
+    <div class="orders">
+      <% for (let order of orders) { %>
+        <div class="order">
+          <h2>Order Number: <%= order._id %></h2>
+          <p>Total Price: $<%= order.totalPrice %></p>
+          <p>Products:</p>
+          <ul class="product-list">
+            <% for (let product of order.products) { %>
+              <li class="product-item">
+                <strong><%= product.title %></strong>
+                <ul>
+                  <li>Price: $<%= product.price %></li>
+                  <li>Count: <%= product.count %></li>
+                </ul>
+              </li>
+            <% } %>
+          </ul>
+        </div>
+      <% } %>
+    </div>
+  </main>
+</body>
+</html>

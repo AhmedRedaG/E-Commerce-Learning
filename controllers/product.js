@@ -6,7 +6,7 @@ import { ObjectId } from "mongodb";
 const tempId = new ObjectId("68261320cd1cead4b36d0bf3");
 
 export const getProducts = (req, res) => {
-  Product.getAllProducts()
+  Product.find()
     .then((products) => {
       res.render("shop/products", {
         pageTitle: "All Products",
@@ -20,7 +20,7 @@ export const getProducts = (req, res) => {
 };
 
 export const getAdminProducts = (req, res) => {
-  Product.getAllProducts()
+  Product.find()
     .then((products) => {
       res.render("admin/products", {
         pageTitle: "Admin Products",
@@ -35,7 +35,7 @@ export const getAdminProducts = (req, res) => {
 
 export const getProductById = (req, res) => {
   const productId = req.params.productId;
-  Product.getProduct(productId)
+  Product.findById(productId)
     .then((product) => {
       res.render("shop/product-detail", {
         pageTitle: product.title,
@@ -57,8 +57,10 @@ export const getAddProduct = (req, res) => {
 };
 
 export const postAddProduct = (req, res) => {
-  const product = req.body;
-  Product.addProduct(product)
+  const productData = req.body;
+  const product = new Product(productData);
+  product
+    .save()
     .then(() => {
       res.redirect("/admin/products");
     })
@@ -69,7 +71,7 @@ export const postAddProduct = (req, res) => {
 
 export const getEditProduct = (req, res) => {
   const productId = req.params.productId;
-  Product.getProduct(productId)
+  Product.findById(productId)
     .then((product) => {
       res.render("admin/manage-product", {
         pageTitle: "Edit " + product.title,
@@ -86,15 +88,16 @@ export const getEditProduct = (req, res) => {
 export const postEditProduct = (req, res) => {
   const product = req.body;
   const productId = req.params.productId;
-  Product.editProduct(productId, product)
+  Product.findByIdAndUpdate(productId, product)
     .then(() => {
-      Cart.updateItem(tempId, productId, product)
-        .then(() => {
-          res.redirect("/admin/products");
-        })
-        .catch((err) => {
-          res.render("error", { pageTitle: "Error", currentPath: "", err });
-        });
+      // Cart.updateItem(tempId, productId, product)
+      //   .then(() => {
+      //     res.redirect("/admin/products");
+      //   })
+      //   .catch((err) => {
+      //     res.render("error", { pageTitle: "Error", currentPath: "", err });
+      //   });
+      res.redirect("/admin/products");
     })
     .catch((err) => {
       res.render("error", { pageTitle: "Error", currentPath: "", err });
@@ -103,15 +106,16 @@ export const postEditProduct = (req, res) => {
 
 export const postDeleteProduct = (req, res) => {
   const productId = req.body._id;
-  Product.deleteProduct(productId)
+  Product.findByIdAndDelete(productId)
     .then(() => {
-      Cart.removeItem(tempId, productId)
-        .then(() => {
-          res.redirect("/admin/products");
-        })
-        .catch((err) => {
-          res.render("error", { pageTitle: "Error", currentPath: "", err });
-        });
+      // Cart.removeItem(tempId, productId)
+      //   .then(() => {
+      //     res.redirect("/admin/products");
+      //   })
+      //   .catch((err) => {
+      //     res.render("error", { pageTitle: "Error", currentPath: "", err });
+      //   });
+      res.redirect("/admin/products");
     })
     .catch((err) => {
       res.render("error", { pageTitle: "Error", currentPath: "", err });

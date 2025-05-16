@@ -70,16 +70,22 @@ export const postClearCart = (req, res) => {
     });
 };
 
-export const getCheckout = (req, res) => {
-  const cart = [];
-  res.render("shop/checkout", {
-    pageTitle: "Checkout",
-    currentPath: "/checkout",
-    cart: cart,
-  });
+export const getOrders = (req, res) => {
+  const userId = req.user._id;
+  Order.find({ userId })
+    .then((orders) => {
+      res.render("shop/orders", {
+        pageTitle: "Your Orders",
+        currentPath: "/orders",
+        orders: orders,
+      });
+    })
+    .catch((err) => {
+      res.render("error", { pageTitle: "Error", currentPath: "", err });
+    });
 };
 
-export const postCheckout = (req, res) => {
+export const postOrders = (req, res) => {
   const userId = req.user._id;
   const products = req.user.getCart();
   const totalPrice = req.user.getTotalPrice();
@@ -93,20 +99,6 @@ export const postCheckout = (req, res) => {
     .then(() => {
       req.user.clearCart();
       res.redirect("/orders");
-    })
-    .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
-    });
-};
-
-export const getOrders = (req, res) => {
-  Order.find({ userId: req.user._id })
-    .then((orders) => {
-      res.render("shop/orders", {
-        pageTitle: "Your Orders",
-        currentPath: "/orders",
-        orders: orders,
-      });
     })
     .catch((err) => {
       res.render("error", { pageTitle: "Error", currentPath: "", err });

@@ -7,7 +7,7 @@ import productsRoutes from "./routers/products.js";
 import rootRoutes from "./routers/root.js";
 import errorRoutes from "./routers/error.js";
 import cartRoutes from "./routers/cart.js";
-import checkoutRoutes from "./routers/checkout.js";
+import ordersRoutes from "./routers/orders.js";
 
 import User from "./models/userModel.js";
 
@@ -35,7 +35,7 @@ app.use((req, res, next) => {
 app.use("/admin", adminRoutes);
 app.use("/products", productsRoutes);
 app.use("/cart", cartRoutes);
-app.use(checkoutRoutes);
+app.use("/orders", ordersRoutes);
 app.use(rootRoutes);
 app.use(errorRoutes);
 

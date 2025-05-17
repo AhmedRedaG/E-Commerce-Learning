@@ -41,13 +41,13 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  User.findOne({ name: "Ahmed Reda" })
+  User.findById(req.session.userId)
     .then((user) => {
       req.user = user;
       next();
     })
     .catch((err) => {
-      console.log(err);
+      res.render("error", { pageTitle: "Error", currentPath: "", err });
     });
 });
 
@@ -63,21 +63,6 @@ mongoose
   .connect(process.env.MONGODB_URL)
   .then(() => {
     app.listen(3000, () => {
-      User.findOne({ name: "Ahmed Reda" })
-        .then((crrUser) => {
-          if (crrUser) {
-            return;
-          }
-          const user = new User({
-            name: "Ahmed Reda",
-            email: "ahmed@gmail.com",
-            cart: [],
-          });
-          return user.save();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
       console.log("database connected and server is running on port 3000");
     });
   })

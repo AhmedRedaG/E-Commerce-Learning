@@ -1,7 +1,7 @@
 import User from "../models/userModel.js";
 
 export const getLogin = (req, res) => {
-  if (req.session.isLoggedIn) {
+  if (req.user) {
     return res.redirect("/");
   }
   res.render("auth/login", {
@@ -21,6 +21,7 @@ export const postLogin = (req, res) => {
       if (user.password !== password) {
         return res.redirect("/login");
       }
+      req.session.userId = user._id;
       res.redirect("/");
     })
     .catch((err) => {
@@ -29,6 +30,9 @@ export const postLogin = (req, res) => {
 };
 
 export const getSignup = (req, res) => {
+  if (req.user) {
+    return res.redirect("/");
+  }
   res.render("auth/login", {
     pageTitle: "Signup",
     currentPath: "/signup",

@@ -1,4 +1,5 @@
 import Product from "../models/productModel.js";
+import User from "../models/userModel.js";
 
 export const getProducts = (req, res) => {
   if (req.user) {
@@ -150,8 +151,15 @@ export const postEditProduct = (req, res) => {
   const productId = req.params.productId;
   Product.findByIdAndUpdate(productId, product)
     .then(() => {
-      req.user
-        .updateItem(productId, product)
+      User.updateMany(
+        { role: "user", "cart.id": productId },
+        {
+          $set: {
+            "cart.$.title": product.title,
+            "cart.$.price": product.price,
+          },
+        }
+      )
         .then(() => {
           res.redirect("/admin/products");
         })
@@ -178,8 +186,14 @@ export const postDeleteProduct = (req, res) => {
   const productId = req.body._id;
   Product.findByIdAndDelete(productId)
     .then(() => {
-      req.user
-        .removeItem(productId)
+      User.updateMany(
+        { role: "user", "cart.id": productId },
+        {
+          $pull: {
+            cart: { id: productId },
+          },
+        }
+      )
         .then(() => {
           res.redirect("/admin/products");
         })

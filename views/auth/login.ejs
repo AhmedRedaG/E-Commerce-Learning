@@ -1,0 +1,29 @@
+<%- include('../includes/header') %>
+  <link rel='stylesheet' href='/css/login.css'>
+  </head>
+
+  <body>
+    <%- include('../includes/navigation') %>
+
+    <main>
+      <h2><% if (signup) { %>Signup<% } else { %>Login<% } %></h2>
+      <form action="/<% if (signup) { %>signup<% } else { %>login<% } %>" method="POST">
+        <% if (signup) { %>
+          <div>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required />
+          </div>
+        <% } %>
+        <div>
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+        <div>
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+        <button type="submit"><% if (signup) { %>Signup<% } else { %>Login<% } %></button>
+      </form>
+    </main>
+  </body>
+</html>

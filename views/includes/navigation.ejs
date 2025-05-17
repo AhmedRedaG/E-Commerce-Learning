@@ -7,41 +7,70 @@
         >Shop</a
       >
     </li>
-    <li>
-      <a
-        href="/products"
-        class= <%= currentPath === '/products' ? 'active' : '' %>
-        >Products</a
-      >
-    </li>
-    <li>
-      <a
-        href="/cart"
-        class= <%= currentPath === '/cart' ? 'active' : '' %>
-        >Cart</a
-      >
-    </li>
-    <li>
-      <a
-        href="/orders"
-        class= <%= currentPath === '/orders' ? 'active' : '' %>
-        >Orders</a
-      >
-    </li>
-    <li>
-      <a
-        href="/admin/add-product"
-        class=<%= currentPath === '/admin/add-product' ? 'active' : '' %> 
-        >Add Product</a
-      >
-    </li>
-    <li>
-      <a
-        href="/admin/products"
-        class= <%= currentPath === '/admin/products' ? 'active' : '' %>
-        >Admin Products</a
-      >
-    </li>
+
+    <!-- admin navigation -->
+    <% if (role == "admin") { %>
+      <li>
+        <a
+          href="/admin/products"
+          class= <%= currentPath === '/admin/products' ? 'active' : '' %>
+          >Products</a
+        >
+      </li>
+      <li>
+        <a
+          href="/admin/add-product"
+          class=<%= currentPath === '/admin/add-product' ? 'active' : '' %> 
+          >Add Product</a
+        >
+      </li>
+    <% } else if (role == "user") { %>
+
+      <!-- user navigation -->
+      <li>
+        <a
+          href="/products"
+          class= <%= currentPath === '/products' ? 'active' : '' %>
+          >Products</a
+        >
+      </li>
+      <li>
+        <a
+          href="/cart"
+          class= <%= currentPath === '/cart' ? 'active' : '' %>
+          >Cart</a
+        >
+      </li>
+      <li>
+        <a
+          href="/orders"
+          class= <%= currentPath === '/orders' ? 'active' : '' %>
+          >Orders</a
+        >
+      </li>
+    <% } %>
+
+
+    <% if (isAuthenticated) { %>
+      <li>
+        <form action="/logout" method="POST">`
+          <button type="submit">Logout</button>
+        </form>
+      </li>
+    <% } else { %>
+      <li>
+        <a
+          href="/login"
+          class= <%= currentPath === '/login' ? 'active' : '' %>
+          >Login</a
+        >
+        <a
+          href="/signup"
+          class= <%= currentPath === '/signup' ? 'active' : '' %>
+          >Signup</a
+        >
+      </li>
+    <% } %>
 
   </ul>
 </header>

@@ -1,5 +1,7 @@
 import User from "../models/userModel.js";
 
+import bcrypt from "bcryptjs";
+
 export const getLogin = (req, res) => {
   if (req.user) {
     return res.redirect("/");
@@ -20,15 +22,17 @@ export const postLogin = (req, res) => {
       if (!user) {
         return res.redirect("/signup");
       }
-      if (user.password !== password) {
-        return res.redirect("/login");
-      }
-      req.session.userId = user._id;
-      req.session.save((err) => {
-        if (err) {
-          res.render("error", { pageTitle: "Error", currentPath: "", err });
+      bcrypt.compare(password, user.password).then((isMatched) => {
+        if (!isMatched) {
+          return res.redirect("/login");
         }
-        res.redirect("/");
+        req.session.userId = user._id;
+        req.session.save((err) => {
+          if (err) {
+            res.render("error", { pageTitle: "Error", currentPath: "", err });
+          }
+          res.redirect("/");
+        });
       });
     })
     .catch((err) => {
@@ -59,10 +63,20 @@ export const postSignup = (req, res) => {
       if (userExist) {
         return res.redirect("/signup");
       }
-      const user = new User({ name, email, password, cart: [] });
-      user.save().then(() => {
-        res.redirect("/login");
-      });
+      bcrypt
+        .hash(password, 10)
+        .then((hashedPassword) => {
+          const user = new User({
+            name,
+            email,
+            password: hashedPassword,
+            cart: [],
+          });
+          return user.save();
+        })
+        .then(() => {
+          res.redirect("/login");
+        });
     })
     .catch((err) => {
       res.render("error", { pageTitle: "Error", currentPath: "", err });

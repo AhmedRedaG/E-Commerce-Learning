@@ -50,12 +50,19 @@ export const getSignup = (req, res) => {
 };
 
 export const postSignup = (req, res) => {
-  const { name, email, password } = req.body;
-  const user = new User({ name, email, password, cart: [] });
-  user
-    .save()
-    .then(() => {
-      res.redirect("/login");
+  const { name, email, password, confirmPassword } = req.body;
+  if (password !== confirmPassword) {
+    return res.redirect("/signup");
+  }
+  User.findOne({ email })
+    .then((userExist) => {
+      if (userExist) {
+        return res.redirect("/signup");
+      }
+      const user = new User({ name, email, password, cart: [] });
+      user.save().then(() => {
+        res.redirect("/login");
+      });
     })
     .catch((err) => {
       res.render("error", { pageTitle: "Error", currentPath: "", err });

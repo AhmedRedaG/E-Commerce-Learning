@@ -1,6 +1,8 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import session from "express-session";
+import connectMongoDbSession from "connect-mongodb-session";
 
 import adminRoutes from "./routers/admin.js";
 import productsRoutes from "./routers/products.js";
@@ -14,6 +16,14 @@ import User from "./models/userModel.js";
 
 import path from "./util/pathResolver.js";
 
+dotenv.config();
+
+const MongoDBStore = connectMongoDbSession(session);
+const store = new MongoDBStore({
+  uri: process.env.MONGODB_URL,
+  collection: "sessions",
+});
+
 const app = express();
 
 app.set("view engine", "ejs");
@@ -21,6 +31,14 @@ app.set("views", "views");
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path("public")));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store,
+  })
+);
 
 app.use((req, res, next) => {
   User.findOne({ name: "Ahmed Reda" })
@@ -40,8 +58,6 @@ app.use("/orders", ordersRoutes);
 app.use(authRoutes);
 app.use(rootRoutes);
 app.use(errorRoutes);
-
-dotenv.config();
 
 mongoose
   .connect(process.env.MONGODB_URL)

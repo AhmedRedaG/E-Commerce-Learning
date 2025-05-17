@@ -1,12 +1,19 @@
 import Product from "../models/productModel.js";
 
 export const getProducts = (req, res) => {
+  if (req.user) {
+    if (req.user.role === "admin") {
+      return res.redirect("/admin/products");
+    }
+  }
   Product.find()
     .then((products) => {
       res.render("shop/products", {
         pageTitle: "All Products",
         currentPath: "/products",
         products: products,
+        isAuthenticated: req.user ? true : false,
+        role: "user",
       });
     })
     .catch((err) => {
@@ -31,6 +38,8 @@ export const getAdminProducts = (req, res) => {
         pageTitle: "Admin Products",
         currentPath: "/admin/products",
         products: products,
+        isAuthenticated: true,
+        role: "admin",
       });
     })
     .catch((err) => {
@@ -46,6 +55,8 @@ export const getProductById = (req, res) => {
         pageTitle: product.title,
         currentPath: "/products",
         product: product,
+        isAuthenticated: req.user ? true : false,
+        role: req.user ? req.user.role : "user",
       });
     })
     .catch((err) => {
@@ -68,6 +79,8 @@ export const getAddProduct = (req, res) => {
     pageTitle: "Add Product",
     currentPath: "/admin/add-product",
     edit: false,
+    isAuthenticated: true,
+    role: "admin",
   });
 };
 
@@ -113,6 +126,8 @@ export const getEditProduct = (req, res) => {
         currentPath: "admin/add-product",
         product: product,
         edit: true,
+        isAuthenticated: true,
+        role: "admin",
       });
     })
     .catch((err) => {

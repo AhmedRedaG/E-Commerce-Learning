@@ -8,6 +8,8 @@ export const getLogin = (req, res) => {
     pageTitle: "Login",
     currentPath: "/login",
     signup: false,
+    isAuthenticated: false,
+    role: "",
   });
 };
 
@@ -42,6 +44,8 @@ export const getSignup = (req, res) => {
     pageTitle: "Signup",
     currentPath: "/signup",
     signup: true,
+    isAuthenticated: false,
+    role: "",
   });
 };
 

@@ -1,5 +1,4 @@
 import Product from "../models/productModel.js";
-import User from "../models/userModel.js";
 
 export const getProducts = (req, res) => {
   Product.find()
@@ -16,6 +15,16 @@ export const getProducts = (req, res) => {
 };
 
 export const getAdminProducts = (req, res) => {
+  if (!req.user) {
+    return res.redirect("/login");
+  }
+  if (req.user.role !== "admin") {
+    return res.render("error", {
+      pageTitle: "Error",
+      currentPath: "",
+      err: "You are not authorized to view this page",
+    });
+  }
   Product.find()
     .then((products) => {
       res.render("admin/products", {
@@ -45,6 +54,16 @@ export const getProductById = (req, res) => {
 };
 
 export const getAddProduct = (req, res) => {
+  if (!req.user) {
+    return res.redirect("/login");
+  }
+  if (req.user.role !== "admin") {
+    return res.render("error", {
+      pageTitle: "Error",
+      currentPath: "",
+      err: "You are not authorized to view this page",
+    });
+  }
   res.render("admin/manage-product", {
     pageTitle: "Add Product",
     currentPath: "/admin/add-product",
@@ -53,6 +72,16 @@ export const getAddProduct = (req, res) => {
 };
 
 export const postAddProduct = (req, res) => {
+  if (!req.user) {
+    return res.redirect("/login");
+  }
+  if (req.user.role !== "admin") {
+    return res.render("error", {
+      pageTitle: "Error",
+      currentPath: "",
+      err: "You are not authorized to view this page",
+    });
+  }
   const productData = req.body;
   const product = new Product(productData);
   product
@@ -66,6 +95,16 @@ export const postAddProduct = (req, res) => {
 };
 
 export const getEditProduct = (req, res) => {
+  if (!req.user) {
+    return res.redirect("/login");
+  }
+  if (req.user.role !== "admin") {
+    return res.render("error", {
+      pageTitle: "Error",
+      currentPath: "",
+      err: "You are not authorized to view this page",
+    });
+  }
   const productId = req.params.productId;
   Product.findById(productId)
     .then((product) => {
@@ -82,6 +121,16 @@ export const getEditProduct = (req, res) => {
 };
 
 export const postEditProduct = (req, res) => {
+  if (!req.user) {
+    return res.redirect("/login");
+  }
+  if (req.user.role !== "admin") {
+    return res.render("error", {
+      pageTitle: "Error",
+      currentPath: "",
+      err: "You are not authorized to view this page",
+    });
+  }
   const product = req.body;
   const productId = req.params.productId;
   Product.findByIdAndUpdate(productId, product)
@@ -101,6 +150,16 @@ export const postEditProduct = (req, res) => {
 };
 
 export const postDeleteProduct = (req, res) => {
+  if (!req.user) {
+    return res.redirect("/login");
+  }
+  if (req.user.role !== "admin") {
+    return res.render("error", {
+      pageTitle: "Error",
+      currentPath: "",
+      err: "You are not authorized to view this page",
+    });
+  }
   const productId = req.body._id;
   Product.findByIdAndDelete(productId)
     .then(() => {

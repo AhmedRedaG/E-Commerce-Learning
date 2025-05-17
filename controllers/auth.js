@@ -22,7 +22,12 @@ export const postLogin = (req, res) => {
         return res.redirect("/login");
       }
       req.session.userId = user._id;
-      res.redirect("/");
+      req.session.save((err) => {
+        if (err) {
+          res.render("error", { pageTitle: "Error", currentPath: "", err });
+        }
+        res.redirect("/");
+      });
     })
     .catch((err) => {
       res.render("error", { pageTitle: "Error", currentPath: "", err });
@@ -51,4 +56,13 @@ export const postSignup = (req, res) => {
     .catch((err) => {
       res.render("error", { pageTitle: "Error", currentPath: "", err });
     });
+};
+
+export const postLogout = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      res.render("error", { pageTitle: "Error", currentPath: "", err });
+    }
+    res.redirect("/");
+  });
 };

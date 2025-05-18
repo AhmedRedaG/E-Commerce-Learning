@@ -13,7 +13,6 @@ export const getProducts = (req, res) => {
         pageTitle: "All Products",
         currentPath: "/products",
         products: products,
-        isAuthenticated: req.user ? true : false,
         role: "user",
       });
     })
@@ -29,7 +28,6 @@ export const getAdminProducts = (req, res) => {
         pageTitle: "Admin Products",
         currentPath: "/admin/products",
         products: products,
-        isAuthenticated: true,
         role: "admin",
       });
     })
@@ -46,7 +44,6 @@ export const getProductById = (req, res) => {
         pageTitle: product.title,
         currentPath: "/products",
         product: product,
-        isAuthenticated: req.user ? true : false,
         role: req.user ? req.user.role : "user",
       });
     })
@@ -60,7 +57,6 @@ export const getAddProduct = (req, res) => {
     pageTitle: "Add Product",
     currentPath: "/admin/add-product",
     edit: false,
-    isAuthenticated: true,
     role: "admin",
   });
 };
@@ -87,7 +83,6 @@ export const getEditProduct = (req, res) => {
         currentPath: "admin/add-product",
         product: product,
         edit: true,
-        isAuthenticated: true,
         role: "admin",
       });
     })

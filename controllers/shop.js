@@ -8,7 +8,6 @@ export const getCart = (req, res) => {
     currentPath: "/cart",
     products: cart,
     totalPrice: totalPrice,
-    isAuthenticated: true,
     role: "user",
   });
 };
@@ -80,7 +79,6 @@ export const getOrders = (req, res) => {
         pageTitle: "Your Orders",
         currentPath: "/orders",
         orders: orders,
-        isAuthenticated: true,
         role: "user",
       });
     })

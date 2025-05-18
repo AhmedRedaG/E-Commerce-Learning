@@ -13,7 +13,6 @@ export const getProducts = (req, res) => {
         pageTitle: "All Products",
         currentPath: "/products",
         products: products,
-        role: "user",
       });
     })
     .catch((err) => {
@@ -28,7 +27,6 @@ export const getAdminProducts = (req, res) => {
         pageTitle: "Admin Products",
         currentPath: "/admin/products",
         products: products,
-        role: "admin",
       });
     })
     .catch((err) => {
@@ -44,7 +42,6 @@ export const getProductById = (req, res) => {
         pageTitle: product.title,
         currentPath: "/products",
         product: product,
-        role: req.user ? req.user.role : "user",
       });
     })
     .catch((err) => {
@@ -57,7 +54,6 @@ export const getAddProduct = (req, res) => {
     pageTitle: "Add Product",
     currentPath: "/admin/add-product",
     edit: false,
-    role: "admin",
   });
 };
 
@@ -83,7 +79,6 @@ export const getEditProduct = (req, res) => {
         currentPath: "admin/add-product",
         product: product,
         edit: true,
-        role: "admin",
       });
     })
     .catch((err) => {

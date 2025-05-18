@@ -3,6 +3,5 @@ export const get404 = (req, res) => {
     pageTitle: "Page Not Found",
     currentPath: "",
     err: "Page Not Found",
-    role: req.user ? req.user.role : "",
   });
 };

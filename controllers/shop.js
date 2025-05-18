@@ -8,7 +8,6 @@ export const getCart = (req, res) => {
     currentPath: "/cart",
     products: cart,
     totalPrice: totalPrice,
-    role: "user",
   });
 };
 
@@ -79,7 +78,6 @@ export const getOrders = (req, res) => {
         pageTitle: "Your Orders",
         currentPath: "/orders",
         orders: orders,
-        role: "user",
       });
     })
     .catch((err) => {

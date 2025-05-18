@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import session from "express-session";
 import connectMongoDbSession from "connect-mongodb-session";
+import flash from "connect-flash";
 
 import adminRoutes from "./routers/admin.js";
 import productsRoutes from "./routers/products.js";
@@ -39,6 +40,7 @@ app.use(
     store,
   })
 );
+app.use(flash());
 
 app.use((req, res, next) => {
   User.findById(req.session.userId)

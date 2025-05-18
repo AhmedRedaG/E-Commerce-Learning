@@ -7,6 +7,9 @@
 
     <main>
       <h2><% if (signup) { %>Signup<% } else { %>Login<% } %></h2>
+      <% if (errorMessage.length > 0) { %>
+        <p style="color:red; margin-bottom:10px; font-size:1.2rem;"><%= errorMessage %></p>
+      <% } %>
       <form action="/<% if (signup) { %>signup<% } else { %>login<% } %>" method="POST">
         <% if (signup) { %>
           <div>

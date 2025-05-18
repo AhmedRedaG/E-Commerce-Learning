@@ -12,6 +12,7 @@ export const getLogin = (req, res) => {
     signup: false,
     isAuthenticated: false,
     role: "",
+    errorMessage: req.flash("error"),
   });
 };
 
@@ -20,10 +21,12 @@ export const postLogin = (req, res) => {
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
+        req.flash("error", "Email not found please signup");
         return res.redirect("/signup");
       }
       bcrypt.compare(password, user.password).then((isMatched) => {
         if (!isMatched) {
+          req.flash("error", "Invalid password try again");
           return res.redirect("/login");
         }
         req.session.userId = user._id;
@@ -50,17 +53,20 @@ export const getSignup = (req, res) => {
     signup: true,
     isAuthenticated: false,
     role: "",
+    errorMessage: req.flash("error"),
   });
 };
 
 export const postSignup = (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
   if (password !== confirmPassword) {
+    req.flash("error", "Passwords do not match");
     return res.redirect("/signup");
   }
   User.findOne({ email })
     .then((userExist) => {
       if (userExist) {
+        req.flash("error", "Email already exists");
         return res.redirect("/signup");
       }
       bcrypt

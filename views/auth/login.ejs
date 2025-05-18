@@ -32,6 +32,8 @@
           </div>
         <% } %>
         <button type="submit"><% if (signup) { %>Signup<% } else { %>Login<% } %></button>
+        
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       </form>
     </main>
   </body>

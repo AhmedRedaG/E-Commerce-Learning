@@ -22,14 +22,20 @@
             <form action="/cart/increase" method="POST">
               <input type="hidden" name="productId" value="<%= product.id %>">
               <button type="submit">+1</button>
+
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             </form>
             <form action="/cart/decrease" method="POST">
               <input type="hidden" name="productId" value="<%= product.id %>">
               <button type="submit">-1</button>
+
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             </form>
             <form action="/cart/remove" method="POST">
               <input type="hidden" name="productId" value="<%= product.id %>">
               <button type="submit">Delete</button>
+
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             </form>
           </div>
         <% } %>
@@ -38,12 +44,18 @@
       <div class="cart-controls">
         <form action="/orders" method="POST">
           <button type="submit">Get Order</button>
+
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         </form>
         <form action="/cart/clear" method="POST">
           <button type="submit">Clear Cart</button>
+
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         </form>
         <form action="/products" method="GET">
           <button type="submit">Continue Shopping</button>
+
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         </form>
       </div>
       <% } %>

@@ -1,6 +1,19 @@
 import User from "../models/userModel.js";
 
 import bcrypt from "bcryptjs";
+import mailer from "nodemailer";
+import sendgridTransport from "nodemailer-sendgrid-transport";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const transporter = mailer.createTransport(
+  sendgridTransport({
+    auth: {
+      api_key: process.env.SENDGRID_API_KEY,
+    },
+  })
+);
 
 export const getLogin = (req, res) => {
   if (req.user) {
@@ -78,6 +91,12 @@ export const postSignup = (req, res) => {
         })
         .then(() => {
           res.redirect("/login");
+          transporter.sendMail({
+            to: email,
+            from: "ahmdfarok2@gmail.com",
+            subject: "Signup Succeeded!",
+            html: "<h1>You successfully signed up!</h1>",
+          });
         });
     })
     .catch((err) => {

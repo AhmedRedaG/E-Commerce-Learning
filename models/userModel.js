@@ -6,6 +6,10 @@ const userSchema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
+  resetToken: {
+    hashedToken: { type: String },
+    expiration: { type: Number },
+  },
   role: { type: String, required: true, default: "user" },
   cart: [
     {

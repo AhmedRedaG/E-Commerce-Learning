@@ -1,0 +1,31 @@
+<%- include('../includes/header') %>
+  <link rel='stylesheet' href='/css/login.css'>
+  </head>
+
+  <body>
+    <%- include('../includes/navigation') %>
+
+    <main>
+      <h2>reset password</h2>
+      <% if (errorMessage.length > 0) { %>
+        <p style="color:red; margin-bottom:10px; font-size:1.2rem;"><%= errorMessage %></p>
+      <% } %>
+      <form action="/reset" method="POST">
+        <div>
+          <label for="newPassword"> New Password</label>
+          <input type="password" id="newPassword" name="newPassword" required />
+        </div>
+        <div>
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" required />
+        </div>
+
+        <input type="hidden" name="hashedToken" value="<%= hashedToken %>">
+
+        <button type="submit">change password</button>
+
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      </form>
+    </main>
+  </body>
+</html>

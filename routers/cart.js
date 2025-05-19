@@ -1,19 +1,20 @@
 import Router from "express";
 
 import * as shopController from "../controllers/shop.js";
+import isUserAuth from "../middlewares/userAuth.js";
 
 const router = Router();
 
-router.get("/", shopController.getCart);
+router.get("/", isUserAuth, shopController.getCart);
 
-router.post("/", shopController.postCart);
+router.post("/", isUserAuth, shopController.postCart);
 
-router.post("/increase", shopController.postIncreaseCart);
+router.post("/increase", isUserAuth, shopController.postIncreaseCart);
 
-router.post("/decrease", shopController.postDecreaseCart);
+router.post("/decrease", isUserAuth, shopController.postDecreaseCart);
 
-router.post("/remove", shopController.postRemoveFromCart);
+router.post("/remove", isUserAuth, shopController.postRemoveFromCart);
 
-router.post("/clear", shopController.postClearCart);
+router.post("/clear", isUserAuth, shopController.postClearCart);
 
 export default router;

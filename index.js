@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import session from "express-session";
 import connectMongoDbSession from "connect-mongodb-session";
+import csrf from "csurf";
+import flash from "connect-flash";
 
 import adminRoutes from "./routers/admin.js";
 import productsRoutes from "./routers/products.js";
@@ -24,6 +26,8 @@ const store = new MongoDBStore({
   collection: "sessions",
 });
 
+const csrfProtection = csrf();
+
 const app = express();
 
 app.set("view engine", "ejs");
@@ -39,6 +43,8 @@ app.use(
     store,
   })
 );
+app.use(csrfProtection);
+app.use(flash());
 
 app.use((req, res, next) => {
   User.findById(req.session.userId)
@@ -49,6 +55,13 @@ app.use((req, res, next) => {
     .catch((err) => {
       res.render("error", { pageTitle: "Error", currentPath: "", err });
     });
+});
+
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
+  res.locals.isAuthenticated = req.user ? true : false;
+  res.locals.role = req.user ? req.user.role : "";
+  next();
 });
 
 app.use("/admin", adminRoutes);

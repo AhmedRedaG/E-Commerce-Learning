@@ -7,6 +7,9 @@
 
     <main>
       <h2><% if (signup) { %>Signup<% } else { %>Login<% } %></h2>
+      <% if (errorMessage.length > 0) { %>
+        <p style="color:red; margin-bottom:10px; font-size:1.2rem;"><%= errorMessage %></p>
+      <% } %>
       <form action="/<% if (signup) { %>signup<% } else { %>login<% } %>" method="POST">
         <% if (signup) { %>
           <div>
@@ -22,7 +25,16 @@
           <label for="password">Password</label>
           <input type="password" id="password" name="password" required />
         </div>
+        <% if (signup) { %>
+          <div>
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required />
+          </div>
+        <% } %>
         <button type="submit"><% if (signup) { %>Signup<% } else { %>Login<% } %></button>
+        <p style="color:blue; margin:10px auto 0; font-size:1.2rem;"><a href="/verify">Reset Password</a></p>
+
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       </form>
     </main>
   </body>

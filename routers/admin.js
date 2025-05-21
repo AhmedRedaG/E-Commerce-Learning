@@ -1,4 +1,5 @@
 import Router from "express";
+import { body } from "express-validator";
 
 import * as productController from "../controllers/product.js";
 import isAdminAuth from "../middlewares/adminAuth.js";
@@ -7,7 +8,16 @@ const router = Router();
 
 router.get("/add-product", isAdminAuth, productController.getAddProduct);
 
-router.post("/add-product", isAdminAuth, productController.postAddProduct);
+router.post(
+  "/add-product",
+  [
+    body("title", "Invalid Title").trim().isLength({ min: 3 }),
+    body("price", "Invalid Price").trim().isNumeric(),
+    body("description", "Invalid Description").trim().isLength({ min: 10 }),
+  ],
+  isAdminAuth,
+  productController.postAddProduct
+);
 
 router.get(
   "/edit-product/:productId",
@@ -17,6 +27,11 @@ router.get(
 
 router.post(
   "/edit-product/:productId",
+  [
+    body("title", "Invalid Title").trim().isLength({ min: 3 }),
+    body("price", "Invalid Price").trim().isNumeric(),
+    body("description", "Invalid Description").trim().isLength({ min: 10 }),
+  ],
   isAdminAuth,
   productController.postEditProduct
 );

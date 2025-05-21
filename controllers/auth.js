@@ -21,11 +21,14 @@ export const getLogin = (req, res) => {
   if (req.user) {
     return res.redirect("/");
   }
+  const email = req.query.email;
+  console.log(email);
   res.render("auth/login", {
     pageTitle: "Login",
     currentPath: "/login",
     signup: false,
     errorMessage: req.flash("error"),
+    oldValues: { email: email || "" },
   });
 };
 
@@ -34,7 +37,7 @@ export const postLogin = (req, res) => {
   const validationResults = validationResult(req);
   if (!validationResults.isEmpty()) {
     req.flash("error", validationResults.array()[0].msg);
-    return res.redirect("/login");
+    return res.redirect(`/login/?email=${email}`);
   }
   User.findOne({ email: email })
     .then((user) => {
@@ -65,11 +68,13 @@ export const getSignup = (req, res) => {
   if (req.user) {
     return res.redirect("/");
   }
+  const { name, email } = req.query;
   res.render("auth/login", {
     pageTitle: "Signup",
     currentPath: "/signup",
     signup: true,
     errorMessage: req.flash("error"),
+    oldValues: { name: name || "", email: email || "" },
   });
 };
 
@@ -78,7 +83,7 @@ export const postSignup = (req, res) => {
   const validationResults = validationResult(req);
   if (!validationResults.isEmpty()) {
     req.flash("error", validationResults.array()[0].msg);
-    return res.redirect("/signup");
+    return res.redirect(`/signup/?name=${name}&email=${email}`);
   }
   bcrypt
     .hash(password, 10)

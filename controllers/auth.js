@@ -5,6 +5,7 @@ import crypto from "crypto";
 import mailer from "nodemailer";
 import sendgridTransport from "nodemailer-sendgrid-transport";
 import dotenv from "dotenv";
+import { validationResult } from "express-validator";
 
 dotenv.config();
 
@@ -30,6 +31,11 @@ export const getLogin = (req, res) => {
 
 export const postLogin = (req, res) => {
   const { email, password } = req.body;
+  const validationResults = validationResult(req);
+  if (!validationResults.isEmpty()) {
+    req.flash("error", validationResults.array()[0].msg);
+    return res.redirect("/login");
+  }
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
@@ -68,37 +74,31 @@ export const getSignup = (req, res) => {
 };
 
 export const postSignup = (req, res) => {
-  const { name, email, password, confirmPassword } = req.body;
-  if (password !== confirmPassword) {
-    req.flash("error", "Passwords do not match");
+  const { name, email, password } = req.body;
+  const validationResults = validationResult(req);
+  if (!validationResults.isEmpty()) {
+    req.flash("error", validationResults.array()[0].msg);
     return res.redirect("/signup");
   }
-  User.findOne({ email })
-    .then((userExist) => {
-      if (userExist) {
-        req.flash("error", "Email already exists");
-        return res.redirect("/signup");
-      }
-      bcrypt
-        .hash(password, 10)
-        .then((hashedPassword) => {
-          const user = new User({
-            name,
-            email,
-            password: hashedPassword,
-            cart: [],
-          });
-          return user.save();
-        })
-        .then(() => {
-          res.redirect("/login");
-          transporter.sendMail({
-            to: email,
-            from: "ahmdfarok2@gmail.com",
-            subject: "Signup Succeeded!",
-            html: "<h1>You successfully signed up!</h1>",
-          });
-        });
+  bcrypt
+    .hash(password, 10)
+    .then((hashedPassword) => {
+      const user = new User({
+        name,
+        email,
+        password: hashedPassword,
+        cart: [],
+      });
+      return user.save();
+    })
+    .then(() => {
+      res.redirect("/login");
+      transporter.sendMail({
+        to: email,
+        from: "ahmdfarok2@gmail.com",
+        subject: "Signup Succeeded!",
+        html: "<h1>You successfully signed up!</h1>",
+      });
     })
     .catch((err) => {
       res.render("error", { pageTitle: "Error", currentPath: "", err });
@@ -125,6 +125,11 @@ export const getVerify = (req, res) => {
 
 export const postVerify = (req, res) => {
   const { email } = req.body;
+  const validationResults = validationResult(req);
+  if (!validationResults.isEmpty()) {
+    req.flash("error", validationResults.array()[0].msg);
+    return res.redirect("/verify");
+  }
   User.findOne({ email })
     .then((user) => {
       if (!user) {
@@ -165,6 +170,11 @@ export const postVerify = (req, res) => {
 
 export const postCheckToken = (req, res) => {
   const { email, resetToken } = req.body;
+  const validationResults = validationResult(req);
+  if (!validationResults.isEmpty()) {
+    req.flash("error", validationResults.array()[0].msg);
+    return res.redirect("/verify");
+  }
   User.findOne({ email })
     .then((user) => {
       if (!user) {
@@ -194,7 +204,6 @@ export const postCheckToken = (req, res) => {
 
 export const getReset = (req, res) => {
   const hashedToken = decodeURIComponent(req.params.hashedToken);
-  console.log(hashedToken);
   res.render("auth/reset", {
     pageTitle: "Reset Password",
     currentPath: "/reset",
@@ -204,16 +213,14 @@ export const getReset = (req, res) => {
 };
 
 export const postReset = (req, res) => {
-  const { newPassword, confirmPassword, hashedToken } = req.body;
-  console.log(hashedToken);
-  if (newPassword !== confirmPassword) {
-    req.flash("error", "passwords doesn't matched");
-    return res.redirect(`reset/${hashedToken}`);
+  const { newPassword, hashedToken } = req.body;
+  const validationResults = validationResult(req);
+  if (!validationResults.isEmpty()) {
+    req.flash("error", validationResults.array()[0].msg);
+    return res.redirect(`reset/${encodeURIComponent(hashedToken)}`);
   }
   User.findOne({ "resetToken.hashedToken": hashedToken })
     .then((user) => {
-      console.log(hashedToken);
-
       if (!user) {
         req.flash("error", "Wrong token");
         return res.redirect("/verify");

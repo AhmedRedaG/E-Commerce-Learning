@@ -5,7 +5,6 @@ import crypto from "crypto";
 import mailer from "nodemailer";
 import sendgridTransport from "nodemailer-sendgrid-transport";
 import dotenv from "dotenv";
-import { validationResult } from "express-validator";
 
 dotenv.config();
 
@@ -34,11 +33,6 @@ export const getLogin = (req, res) => {
 
 export const postLogin = (req, res) => {
   const { email, password } = req.body;
-  const validationResults = validationResult(req);
-  if (!validationResults.isEmpty()) {
-    req.flash("error", validationResults.array()[0].msg);
-    return res.redirect(`/login/?email=${email}`);
-  }
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
@@ -80,11 +74,6 @@ export const getSignup = (req, res) => {
 
 export const postSignup = (req, res) => {
   const { name, email, password } = req.body;
-  const validationResults = validationResult(req);
-  if (!validationResults.isEmpty()) {
-    req.flash("error", validationResults.array()[0].msg);
-    return res.redirect(`/signup/?name=${name}&email=${email}`);
-  }
   bcrypt
     .hash(password, 10)
     .then((hashedPassword) => {
@@ -130,11 +119,6 @@ export const getVerify = (req, res) => {
 
 export const postVerify = (req, res) => {
   const { email } = req.body;
-  const validationResults = validationResult(req);
-  if (!validationResults.isEmpty()) {
-    req.flash("error", validationResults.array()[0].msg);
-    return res.redirect("/verify");
-  }
   User.findOne({ email })
     .then((user) => {
       if (!user) {
@@ -175,11 +159,6 @@ export const postVerify = (req, res) => {
 
 export const postCheckToken = (req, res) => {
   const { email, resetToken } = req.body;
-  const validationResults = validationResult(req);
-  if (!validationResults.isEmpty()) {
-    req.flash("error", validationResults.array()[0].msg);
-    return res.redirect("/verify");
-  }
   User.findOne({ email })
     .then((user) => {
       if (!user) {
@@ -218,12 +197,7 @@ export const getReset = (req, res) => {
 };
 
 export const postReset = (req, res) => {
-  const { newPassword, hashedToken } = req.body;
-  const validationResults = validationResult(req);
-  if (!validationResults.isEmpty()) {
-    req.flash("error", validationResults.array()[0].msg);
-    return res.redirect(`reset/${encodeURIComponent(hashedToken)}`);
-  }
+  const { password, hashedToken } = req.body;
   User.findOne({ "resetToken.hashedToken": hashedToken })
     .then((user) => {
       if (!user) {
@@ -236,7 +210,7 @@ export const postReset = (req, res) => {
       }
 
       bcrypt
-        .hash(newPassword, 10)
+        .hash(password, 10)
         .then((hashedPassword) => {
           user.password = hashedPassword;
           user.resetToken = { hashedToken: null, expiration: null };

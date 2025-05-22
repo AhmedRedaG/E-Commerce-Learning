@@ -5,7 +5,6 @@ import crypto from "crypto";
 import mailer from "nodemailer";
 import sendgridTransport from "nodemailer-sendgrid-transport";
 import dotenv from "dotenv";
-import { nextTick } from "process";
 
 dotenv.config();
 
@@ -53,9 +52,7 @@ export const postLogin = (req, res, next) => {
         });
       });
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const getSignup = (req, res) => {
@@ -94,9 +91,7 @@ export const postSignup = (req, res, next) => {
         html: "<h1>You successfully signed up!</h1>",
       });
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const postLogout = (req, res, next) => {
@@ -152,9 +147,7 @@ export const postVerify = (req, res, next) => {
           });
         });
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const postCheckToken = (req, res, next) => {
@@ -181,9 +174,7 @@ export const postCheckToken = (req, res, next) => {
           );
         });
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const getReset = (req, res) => {
@@ -219,7 +210,5 @@ export const postReset = (req, res, next) => {
           res.redirect("/login");
         });
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };

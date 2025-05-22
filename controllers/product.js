@@ -17,9 +17,7 @@ export const getProducts = (req, res, next) => {
         products: products,
       });
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const getAdminProducts = (req, res, next) => {
@@ -31,9 +29,7 @@ export const getAdminProducts = (req, res, next) => {
         products: products,
       });
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const getProductById = (req, res, next) => {
@@ -46,9 +42,7 @@ export const getProductById = (req, res, next) => {
         product: product,
       });
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const getAddProduct = (req, res) => {
@@ -83,9 +77,7 @@ export const postAddProduct = (req, res, next) => {
     .then(() => {
       res.redirect("/admin/products");
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const getEditProduct = (req, res, next) => {
@@ -100,9 +92,7 @@ export const getEditProduct = (req, res, next) => {
         errorMessage: req.flash("error"),
       });
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const postEditProduct = (req, res, next) => {
@@ -129,9 +119,7 @@ export const postEditProduct = (req, res, next) => {
         res.redirect("/admin/products");
       });
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const postDeleteProduct = (req, res, next) => {
@@ -149,7 +137,5 @@ export const postDeleteProduct = (req, res, next) => {
         res.redirect("/admin/products");
       });
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };

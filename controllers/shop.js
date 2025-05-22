@@ -18,9 +18,7 @@ export const postCart = (req, res, next) => {
     .then(() => {
       res.redirect("/products");
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const postIncreaseCart = (req, res, next) => {
@@ -30,9 +28,7 @@ export const postIncreaseCart = (req, res, next) => {
     .then(() => {
       res.redirect("/cart");
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const postDecreaseCart = (req, res, next) => {
@@ -42,9 +38,7 @@ export const postDecreaseCart = (req, res, next) => {
     .then(() => {
       res.redirect("/cart");
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const postRemoveFromCart = (req, res, next) => {
@@ -54,9 +48,7 @@ export const postRemoveFromCart = (req, res, next) => {
     .then(() => {
       res.redirect("/cart");
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const postClearCart = (req, res, next) => {
@@ -65,9 +57,7 @@ export const postClearCart = (req, res, next) => {
     .then(() => {
       res.redirect("/cart");
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const getOrders = (req, res, next) => {
@@ -80,9 +70,7 @@ export const getOrders = (req, res, next) => {
         orders: orders,
       });
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };
 
 export const postOrders = (req, res, next) => {
@@ -100,7 +88,5 @@ export const postOrders = (req, res, next) => {
       req.user.clearCart();
       res.redirect("/orders");
     })
-    .catch((err) => {
-      return next(err);
-    });
+    .catch(next);
 };

@@ -53,7 +53,7 @@ export const getProductById = (req, res) => {
 
 export const getAddProduct = (req, res) => {
   const { title, price, description } = req.query;
-  res.render("admin/manage-product", {
+  res.status(title ? 422 : 200).render("admin/manage-product", {
     pageTitle: "Add Product",
     currentPath: "/admin/add-product",
     edit: false,
@@ -89,7 +89,6 @@ export const postAddProduct = (req, res) => {
 };
 
 export const getEditProduct = (req, res) => {
-  console.log(req.flash("error"));
   const productId = req.params.productId;
   Product.findById(productId)
     .then((product) => {
@@ -99,11 +98,6 @@ export const getEditProduct = (req, res) => {
         product: product,
         edit: true,
         errorMessage: req.flash("error"),
-        oldData: {
-          title: "",
-          price: "",
-          description: "",
-        },
       });
     })
     .catch((err) => {

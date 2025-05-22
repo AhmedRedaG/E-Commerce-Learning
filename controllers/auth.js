@@ -21,8 +21,7 @@ export const getLogin = (req, res) => {
     return res.redirect("/");
   }
   const email = req.query.email;
-  console.log(email);
-  res.render("auth/login", {
+  res.status(email ? 422 : 200).render("auth/login", {
     pageTitle: "Login",
     currentPath: "/login",
     signup: false,
@@ -63,7 +62,7 @@ export const getSignup = (req, res) => {
     return res.redirect("/");
   }
   const { name, email } = req.query;
-  res.render("auth/login", {
+  res.status(email ? 422 : 200).render("auth/login", {
     pageTitle: "Signup",
     currentPath: "/signup",
     signup: true,

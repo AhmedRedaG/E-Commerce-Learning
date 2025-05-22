@@ -3,7 +3,7 @@ import { validationResult } from "express-validator";
 import Product from "../models/productModel.js";
 import User from "../models/userModel.js";
 
-export const getProducts = (req, res) => {
+export const getProducts = (req, res, next) => {
   if (req.user) {
     if (req.user.role === "admin") {
       return res.redirect("/admin/products");
@@ -18,11 +18,11 @@ export const getProducts = (req, res) => {
       });
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      return next(err);
     });
 };
 
-export const getAdminProducts = (req, res) => {
+export const getAdminProducts = (req, res, next) => {
   Product.find()
     .then((products) => {
       res.render("admin/products", {
@@ -32,11 +32,11 @@ export const getAdminProducts = (req, res) => {
       });
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      return next(err);
     });
 };
 
-export const getProductById = (req, res) => {
+export const getProductById = (req, res, next) => {
   const productId = req.params.productId;
   Product.findById(productId)
     .then((product) => {
@@ -47,7 +47,7 @@ export const getProductById = (req, res) => {
       });
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      return next(err);
     });
 };
 
@@ -66,7 +66,7 @@ export const getAddProduct = (req, res) => {
   });
 };
 
-export const postAddProduct = (req, res) => {
+export const postAddProduct = (req, res, next) => {
   const productData = req.body;
 
   const validationResults = validationResult(req);
@@ -84,11 +84,11 @@ export const postAddProduct = (req, res) => {
       res.redirect("/admin/products");
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", error: err });
+      return next(err);
     });
 };
 
-export const getEditProduct = (req, res) => {
+export const getEditProduct = (req, res, next) => {
   const productId = req.params.productId;
   Product.findById(productId)
     .then((product) => {
@@ -101,11 +101,11 @@ export const getEditProduct = (req, res) => {
       });
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      return next(err);
     });
 };
 
-export const postEditProduct = (req, res) => {
+export const postEditProduct = (req, res, next) => {
   const product = req.body;
   const productId = req.params.productId;
 
@@ -125,20 +125,16 @@ export const postEditProduct = (req, res) => {
             "cart.$.price": product.price,
           },
         }
-      )
-        .then(() => {
-          res.redirect("/admin/products");
-        })
-        .catch((err) => {
-          res.render("error", { pageTitle: "Error", currentPath: "", err });
-        });
+      ).then(() => {
+        res.redirect("/admin/products");
+      });
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      return next(err);
     });
 };
 
-export const postDeleteProduct = (req, res) => {
+export const postDeleteProduct = (req, res, next) => {
   const productId = req.body._id;
   Product.findByIdAndDelete(productId)
     .then(() => {
@@ -149,15 +145,11 @@ export const postDeleteProduct = (req, res) => {
             cart: { id: productId },
           },
         }
-      )
-        .then(() => {
-          res.redirect("/admin/products");
-        })
-        .catch((err) => {
-          res.render("error", { pageTitle: "Error", currentPath: "", err });
-        });
+      ).then(() => {
+        res.redirect("/admin/products");
+      });
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      return next(err);
     });
 };

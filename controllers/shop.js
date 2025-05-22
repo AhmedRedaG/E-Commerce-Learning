@@ -11,7 +11,7 @@ export const getCart = (req, res) => {
   });
 };
 
-export const postCart = (req, res) => {
+export const postCart = (req, res, next) => {
   const productId = req.body.productId;
   req.user
     .addItem(productId)
@@ -19,11 +19,11 @@ export const postCart = (req, res) => {
       res.redirect("/products");
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      return next(err);
     });
 };
 
-export const postIncreaseCart = (req, res) => {
+export const postIncreaseCart = (req, res, next) => {
   const productId = req.body.productId;
   req.user
     .recountItem(productId, 1)
@@ -31,11 +31,11 @@ export const postIncreaseCart = (req, res) => {
       res.redirect("/cart");
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      return next(err);
     });
 };
 
-export const postDecreaseCart = (req, res) => {
+export const postDecreaseCart = (req, res, next) => {
   const productId = req.body.productId;
   req.user
     .recountItem(productId, -1)
@@ -43,11 +43,11 @@ export const postDecreaseCart = (req, res) => {
       res.redirect("/cart");
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      return next(err);
     });
 };
 
-export const postRemoveFromCart = (req, res) => {
+export const postRemoveFromCart = (req, res, next) => {
   const productId = req.body.productId;
   req.user
     .removeItem(productId)
@@ -55,22 +55,22 @@ export const postRemoveFromCart = (req, res) => {
       res.redirect("/cart");
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      return next(err);
     });
 };
 
-export const postClearCart = (req, res) => {
+export const postClearCart = (req, res, next) => {
   req.user
     .clearCart()
     .then(() => {
       res.redirect("/cart");
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      return next(err);
     });
 };
 
-export const getOrders = (req, res) => {
+export const getOrders = (req, res, next) => {
   const userId = req.user._id;
   Order.find({ userId })
     .then((orders) => {
@@ -81,11 +81,11 @@ export const getOrders = (req, res) => {
       });
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      return next(err);
     });
 };
 
-export const postOrders = (req, res) => {
+export const postOrders = (req, res, next) => {
   const userId = req.user._id;
   const products = req.user.getCart();
   const totalPrice = req.user.getTotalPrice();
@@ -101,6 +101,6 @@ export const postOrders = (req, res) => {
       res.redirect("/orders");
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      return next(err);
     });
 };

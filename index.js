@@ -53,7 +53,7 @@ app.use((req, res, next) => {
       next();
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      next(err);
     });
 });
 

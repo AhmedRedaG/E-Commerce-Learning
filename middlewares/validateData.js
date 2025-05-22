@@ -1,5 +1,7 @@
 import { body } from "express-validator";
 
+import User from "../models/userModel.js";
+
 export const validateEmail = body("email", "Invalid Email Syntax")
   .isEmail()
   .normalizeEmail();

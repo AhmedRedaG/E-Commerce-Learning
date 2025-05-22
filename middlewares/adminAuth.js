@@ -3,8 +3,8 @@ const isAdminAuth = (req, res, next) => {
     return res.redirect("/login");
   }
   if (req.user.role !== "admin") {
-    return res.render("error", {
-      pageTitle: "Error",
+    return res.status(401).render("error", {
+      pageTitle: "Unauthorized",
       currentPath: "",
       err: "You are not authorized to view this page",
     });

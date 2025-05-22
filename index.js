@@ -8,11 +8,11 @@ import flash from "connect-flash";
 
 import adminRoutes from "./routers/admin.js";
 import productsRoutes from "./routers/products.js";
-import rootRoutes from "./routers/root.js";
-import errorRoutes from "./routers/error.js";
 import cartRoutes from "./routers/cart.js";
 import ordersRoutes from "./routers/orders.js";
 import authRoutes from "./routers/auth.js";
+
+import { get404, get500 } from "./controllers/error.js";
 
 import User from "./models/userModel.js";
 
@@ -53,7 +53,7 @@ app.use((req, res, next) => {
       next();
     })
     .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      next(err);
     });
 });
 
@@ -69,8 +69,16 @@ app.use("/products", productsRoutes);
 app.use("/cart", cartRoutes);
 app.use("/orders", ordersRoutes);
 app.use(authRoutes);
-app.use(rootRoutes);
-app.use(errorRoutes);
+
+app.use((req, res) => {
+  res.render("root", {
+    pageTitle: "Our Shop",
+    currentPath: "/",
+  });
+});
+
+app.use(get404);
+app.use(get500);
 
 mongoose
   .connect(process.env.MONGODB_URL)

@@ -21,8 +21,7 @@ export const getLogin = (req, res) => {
     return res.redirect("/");
   }
   const email = req.query.email;
-  console.log(email);
-  res.render("auth/login", {
+  res.status(email ? 422 : 200).render("auth/login", {
     pageTitle: "Login",
     currentPath: "/login",
     signup: false,
@@ -31,7 +30,7 @@ export const getLogin = (req, res) => {
   });
 };
 
-export const postLogin = (req, res) => {
+export const postLogin = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email: email })
     .then((user) => {
@@ -47,15 +46,13 @@ export const postLogin = (req, res) => {
         req.session.userId = user._id;
         req.session.save((err) => {
           if (err) {
-            res.render("error", { pageTitle: "Error", currentPath: "", err });
+            return next(err);
           }
           res.redirect("/");
         });
       });
     })
-    .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
-    });
+    .catch(next);
 };
 
 export const getSignup = (req, res) => {
@@ -63,7 +60,7 @@ export const getSignup = (req, res) => {
     return res.redirect("/");
   }
   const { name, email } = req.query;
-  res.render("auth/login", {
+  res.status(email ? 422 : 200).render("auth/login", {
     pageTitle: "Signup",
     currentPath: "/signup",
     signup: true,
@@ -72,7 +69,7 @@ export const getSignup = (req, res) => {
   });
 };
 
-export const postSignup = (req, res) => {
+export const postSignup = (req, res, next) => {
   const { name, email, password } = req.body;
   bcrypt
     .hash(password, 10)
@@ -94,15 +91,13 @@ export const postSignup = (req, res) => {
         html: "<h1>You successfully signed up!</h1>",
       });
     })
-    .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
-    });
+    .catch(next);
 };
 
-export const postLogout = (req, res) => {
+export const postLogout = (req, res, next) => {
   req.session.destroy((err) => {
     if (err) {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
+      return next(err);
     }
     res.redirect("/");
   });
@@ -117,7 +112,7 @@ export const getVerify = (req, res) => {
   });
 };
 
-export const postVerify = (req, res) => {
+export const postVerify = (req, res, next) => {
   const { email } = req.body;
   User.findOne({ email })
     .then((user) => {
@@ -135,7 +130,7 @@ export const postVerify = (req, res) => {
                 <p>This code is valid for 10 minutes. Do not share it with anyone.</p>
                 `,
       });
-      bcrypt
+      return bcrypt
         .hash(token, 10)
         .then((hashedToken) => {
           user.resetToken.hashedToken = hashedToken;
@@ -152,12 +147,10 @@ export const postVerify = (req, res) => {
           });
         });
     })
-    .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
-    });
+    .catch(next);
 };
 
-export const postCheckToken = (req, res) => {
+export const postCheckToken = (req, res, next) => {
   const { email, resetToken } = req.body;
   User.findOne({ email })
     .then((user) => {
@@ -181,9 +174,7 @@ export const postCheckToken = (req, res) => {
           );
         });
     })
-    .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
-    });
+    .catch(next);
 };
 
 export const getReset = (req, res) => {
@@ -196,7 +187,7 @@ export const getReset = (req, res) => {
   });
 };
 
-export const postReset = (req, res) => {
+export const postReset = (req, res, next) => {
   const { password, hashedToken } = req.body;
   User.findOne({ "resetToken.hashedToken": hashedToken })
     .then((user) => {
@@ -208,7 +199,6 @@ export const postReset = (req, res) => {
         req.flash("error", "Time expired please try again");
         return res.redirect("/verify");
       }
-
       bcrypt
         .hash(password, 10)
         .then((hashedPassword) => {
@@ -220,7 +210,5 @@ export const postReset = (req, res) => {
           res.redirect("/login");
         });
     })
-    .catch((err) => {
-      res.render("error", { pageTitle: "Error", currentPath: "", err });
-    });
+    .catch(next);
 };

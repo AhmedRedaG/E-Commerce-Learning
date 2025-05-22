@@ -1,7 +1,6 @@
 import Router from "express";
 
 import * as authController from "../controllers/auth.js";
-import User from "../models/userModel.js";
 import {
   validateEmail,
   validateEmailCSignup,

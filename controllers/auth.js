@@ -20,11 +20,14 @@ export const getLogin = (req, res) => {
   if (req.user) {
     return res.redirect("/");
   }
+  const email = req.query.email;
+  console.log(email);
   res.render("auth/login", {
     pageTitle: "Login",
     currentPath: "/login",
     signup: false,
     errorMessage: req.flash("error"),
+    oldValues: { email: email || "" },
   });
 };
 
@@ -59,46 +62,37 @@ export const getSignup = (req, res) => {
   if (req.user) {
     return res.redirect("/");
   }
+  const { name, email } = req.query;
   res.render("auth/login", {
     pageTitle: "Signup",
     currentPath: "/signup",
     signup: true,
     errorMessage: req.flash("error"),
+    oldValues: { name: name || "", email: email || "" },
   });
 };
 
 export const postSignup = (req, res) => {
-  const { name, email, password, confirmPassword } = req.body;
-  if (password !== confirmPassword) {
-    req.flash("error", "Passwords do not match");
-    return res.redirect("/signup");
-  }
-  User.findOne({ email })
-    .then((userExist) => {
-      if (userExist) {
-        req.flash("error", "Email already exists");
-        return res.redirect("/signup");
-      }
-      bcrypt
-        .hash(password, 10)
-        .then((hashedPassword) => {
-          const user = new User({
-            name,
-            email,
-            password: hashedPassword,
-            cart: [],
-          });
-          return user.save();
-        })
-        .then(() => {
-          res.redirect("/login");
-          transporter.sendMail({
-            to: email,
-            from: "ahmdfarok2@gmail.com",
-            subject: "Signup Succeeded!",
-            html: "<h1>You successfully signed up!</h1>",
-          });
-        });
+  const { name, email, password } = req.body;
+  bcrypt
+    .hash(password, 10)
+    .then((hashedPassword) => {
+      const user = new User({
+        name,
+        email,
+        password: hashedPassword,
+        cart: [],
+      });
+      return user.save();
+    })
+    .then(() => {
+      res.redirect("/login");
+      transporter.sendMail({
+        to: email,
+        from: "ahmdfarok2@gmail.com",
+        subject: "Signup Succeeded!",
+        html: "<h1>You successfully signed up!</h1>",
+      });
     })
     .catch((err) => {
       res.render("error", { pageTitle: "Error", currentPath: "", err });
@@ -194,7 +188,6 @@ export const postCheckToken = (req, res) => {
 
 export const getReset = (req, res) => {
   const hashedToken = decodeURIComponent(req.params.hashedToken);
-  console.log(hashedToken);
   res.render("auth/reset", {
     pageTitle: "Reset Password",
     currentPath: "/reset",
@@ -204,16 +197,9 @@ export const getReset = (req, res) => {
 };
 
 export const postReset = (req, res) => {
-  const { newPassword, confirmPassword, hashedToken } = req.body;
-  console.log(hashedToken);
-  if (newPassword !== confirmPassword) {
-    req.flash("error", "passwords doesn't matched");
-    return res.redirect(`reset/${hashedToken}`);
-  }
+  const { password, hashedToken } = req.body;
   User.findOne({ "resetToken.hashedToken": hashedToken })
     .then((user) => {
-      console.log(hashedToken);
-
       if (!user) {
         req.flash("error", "Wrong token");
         return res.redirect("/verify");
@@ -224,7 +210,7 @@ export const postReset = (req, res) => {
       }
 
       bcrypt
-        .hash(newPassword, 10)
+        .hash(password, 10)
         .then((hashedPassword) => {
           user.password = hashedPassword;
           user.resetToken = { hashedToken: null, expiration: null };

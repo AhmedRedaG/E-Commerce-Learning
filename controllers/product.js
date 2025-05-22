@@ -1,3 +1,5 @@
+import { validationResult } from "express-validator";
+
 import Product from "../models/productModel.js";
 import User from "../models/userModel.js";
 
@@ -50,15 +52,31 @@ export const getProductById = (req, res) => {
 };
 
 export const getAddProduct = (req, res) => {
+  const { title, price, description } = req.query;
   res.render("admin/manage-product", {
     pageTitle: "Add Product",
     currentPath: "/admin/add-product",
     edit: false,
+    errorMessage: req.flash("error"),
+    oldData: {
+      title: title || "",
+      price: price || "",
+      description: description || "",
+    },
   });
 };
 
 export const postAddProduct = (req, res) => {
   const productData = req.body;
+
+  const validationResults = validationResult(req);
+  if (!validationResults.isEmpty()) {
+    req.flash("error", validationResults.array()[0].msg);
+    return res.redirect(
+      `/admin/add-product/?title=${productData.title}&price=${productData.price}&description=${productData.description}`
+    );
+  }
+
   const product = new Product(productData);
   product
     .save()
@@ -71,6 +89,7 @@ export const postAddProduct = (req, res) => {
 };
 
 export const getEditProduct = (req, res) => {
+  console.log(req.flash("error"));
   const productId = req.params.productId;
   Product.findById(productId)
     .then((product) => {
@@ -79,6 +98,12 @@ export const getEditProduct = (req, res) => {
         currentPath: "admin/add-product",
         product: product,
         edit: true,
+        errorMessage: req.flash("error"),
+        oldData: {
+          title: "",
+          price: "",
+          description: "",
+        },
       });
     })
     .catch((err) => {
@@ -89,6 +114,13 @@ export const getEditProduct = (req, res) => {
 export const postEditProduct = (req, res) => {
   const product = req.body;
   const productId = req.params.productId;
+
+  const validationResults = validationResult(req);
+  if (!validationResults.isEmpty()) {
+    req.flash("error", validationResults.array()[0].msg);
+    return res.redirect(`/admin/edit-product/${productId}`);
+  }
+
   Product.findByIdAndUpdate(productId, product)
     .then(() => {
       User.updateMany(

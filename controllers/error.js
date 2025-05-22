@@ -5,3 +5,12 @@ export const get404 = (req, res) => {
     err: "Page Not Found",
   });
 };
+
+export const get500 = (error, req, res, next) => {
+  console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+  res.status(500).render("error", {
+    pageTitle: "Server Error!",
+    currentPath: "",
+    err: error,
+  });
+};

@@ -65,7 +65,8 @@ export const postAddProduct = (req, res, next) => {
   const imageData = req.file;
 
   if (imageData) {
-    productData.imagePath = imageData.path;
+    console.log(imageData);
+    productData.imagePath = imageData.filename;
   } else {
     req.flash("error", "error in image field");
     return res.redirect(
@@ -108,6 +109,9 @@ export const getEditProduct = (req, res, next) => {
 export const postEditProduct = (req, res, next) => {
   const product = req.body;
   const productId = req.params.productId;
+  const imageData = req.file;
+
+  if (imageData) product.imagePath = imageData.filename;
 
   const validationResults = validationResult(req);
   if (!validationResults.isEmpty()) {
@@ -123,6 +127,7 @@ export const postEditProduct = (req, res, next) => {
           $set: {
             "cart.$.title": product.title,
             "cart.$.price": product.price,
+            "cart.$.imagePath": product.imagePath,
           },
         }
       ).then(() => {

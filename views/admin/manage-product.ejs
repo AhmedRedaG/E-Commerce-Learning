@@ -27,7 +27,7 @@
         </div>
         <div>
           <label for="productImage">Image</label>
-          <input type="file" id="productImage" name="productImage" required value="<% if (edit) {%><%= product.productImage %><% } else { %><%= oldData.productImage %><% } %>"/>
+          <input type="file" id="productImage" name="productImage" value="<% if (edit) {%><%= product.imagePath %><% } %>"/>
         </div>
         <button type="submit"><% if (edit) { %>Edit Product<% } else { %>Add Product<% } %></button>
 

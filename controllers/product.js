@@ -62,8 +62,16 @@ export const getAddProduct = (req, res) => {
 
 export const postAddProduct = (req, res, next) => {
   const productData = req.body;
-  productData.imagePath = req.file.path;
-  console.log(req.file.path);
+  const imageData = req.file;
+
+  if (imageData) {
+    productData.imagePath = imageData.path;
+  } else {
+    req.flash("error", "error in image field");
+    return res.redirect(
+      `/admin/add-product/?title=${productData.title}&price=${productData.price}&description=${productData.description}`
+    );
+  }
 
   const validationResults = validationResult(req);
   if (!validationResults.isEmpty()) {

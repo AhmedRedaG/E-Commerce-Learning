@@ -62,6 +62,8 @@ export const getAddProduct = (req, res) => {
 
 export const postAddProduct = (req, res, next) => {
   const productData = req.body;
+  productData.imagePath = req.file.path;
+  console.log(req.file.path);
 
   const validationResults = validationResult(req);
   if (!validationResults.isEmpty()) {

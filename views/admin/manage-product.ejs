@@ -18,16 +18,16 @@
           <input type="text" id="title" name="title" required value="<% if (edit) {%><%= product.title %><% } else { %><%= oldData.title %><% } %>"/>
         </div>
         <div>
-          <label for="productImage">Image</label>
-          <input type="file" id="productImage" name="productImage" required value="<% if (edit) {%><%= product.productImage %><% } else { %><%= oldData.productImage %><% } %>"/>
-        </div>
-        <div>
           <label for="price">Price</label>
           <input type="number" id="price" name="price" required value="<% if (edit) {%><%= product.price %><% } else { %><%= oldData.price %><% } %>"/>
         </div>
         <div>
           <label for="description">Description</label>
           <textarea id="description" name="description" required><% if (edit) {%><%= product.description %><% } else { %><%= oldData.description %><% } %></textarea>
+        </div>
+        <div>
+          <label for="productImage">Image</label>
+          <input type="file" id="productImage" name="productImage" required value="<% if (edit) {%><%= product.productImage %><% } else { %><%= oldData.productImage %><% } %>"/>
         </div>
         <button type="submit"><% if (edit) { %>Edit Product<% } else { %>Add Product<% } %></button>
 

@@ -7,14 +7,20 @@
         >Shop</a
       >
     </li>
-
+    <li>
+      <a
+        href="/products"
+        class= <%= currentPath === '/products' ? 'active' : '' %>
+        >Products</a
+      >
+    </li>
     <!-- admin navigation -->
     <% if (role == "admin") { %>
       <li>
         <a
           href="/admin/products"
           class= <%= currentPath === '/admin/products' ? 'active' : '' %>
-          >Products</a
+          >Admin Products</a
         >
       </li>
       <li>
@@ -25,15 +31,7 @@
         >
       </li>
     <% } else if (role == "user") { %>
-
       <!-- user navigation -->
-      <li>
-        <a
-          href="/products"
-          class= <%= currentPath === '/products' ? 'active' : '' %>
-          >Products</a
-        >
-      </li>
       <li>
         <a
           href="/cart"

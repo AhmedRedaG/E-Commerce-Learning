@@ -29,6 +29,15 @@
           </div>
         <% } %>
       </div>
+      <div class="pages">
+        <% if (page > 0) { %>
+          <a href="/products/?page=<%= Number(page)-1 %>">pre</a>
+        <% } %>
+        <% if (page < Math.ceil(totalCount/limit) - 1) { %>
+          <a href="/products/?page=<%= Number(page)+1 %>">next</a>
+        <% } %>
+        <a href="/products/?page=<%= Math.ceil(totalCount/limit)-1 %>">last</a>
+      </div>
     </main>
   </body>
 </html>

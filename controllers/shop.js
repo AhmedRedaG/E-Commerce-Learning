@@ -1,5 +1,7 @@
 import Order from "../models/orderModel.js";
 
+import path from "../util/pathResolver.js";
+
 export const getCart = (req, res) => {
   const cart = req.user.getCart();
   const totalPrice = req.user.getTotalPrice();
@@ -87,6 +89,22 @@ export const postOrders = (req, res, next) => {
     .then(() => {
       req.user.clearCart();
       res.redirect("/orders");
+    })
+    .catch(next);
+};
+
+export const getOrderInvoice = (req, res, next) => {
+  const userId = req.user._id;
+  const orderId = req.params.orderId;
+  Order.findById({ _id: orderId, userId })
+    .then((order) => {
+      if (!order) {
+        return res.redirect("/orders");
+      }
+      const filePath = path("data", "invoices", "soft-computing-project.pdf");
+
+      res.setHeader("Content-Disposition", "inline; filename=test.pdf");
+      res.sendFile(filePath);
     })
     .catch(next);
 };

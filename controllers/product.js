@@ -3,6 +3,8 @@ import { validationResult } from "express-validator";
 import Product from "../models/productModel.js";
 import User from "../models/userModel.js";
 
+import { deleteImage } from "../util/fileHelper.js";
+
 export const getProducts = (req, res, next) => {
   if (req.user) {
     if (req.user.role === "admin") {
@@ -65,7 +67,6 @@ export const postAddProduct = (req, res, next) => {
   const imageData = req.file;
 
   if (imageData) {
-    console.log(imageData);
     productData.imagePath = imageData.filename;
   } else {
     req.flash("error", "error in image field");
@@ -111,7 +112,10 @@ export const postEditProduct = (req, res, next) => {
   const productId = req.params.productId;
   const imageData = req.file;
 
-  if (imageData) product.imagePath = imageData.filename;
+  if (imageData) {
+    deleteImage(req.body.oldImage);
+    product.imagePath = imageData.filename;
+  }
 
   const validationResults = validationResult(req);
   if (!validationResults.isEmpty()) {
@@ -140,7 +144,11 @@ export const postEditProduct = (req, res, next) => {
 export const postDeleteProduct = (req, res, next) => {
   const productId = req.body._id;
   Product.findByIdAndDelete(productId)
-    .then(() => {
+    .then((deletedProduct) => {
+      if (!deletedProduct) {
+        return next(new Error("error in deleting product"));
+      }
+      deleteImage(deletedProduct.imagePath);
       User.updateMany(
         { role: "user", "cart.id": productId },
         {

@@ -27,8 +27,11 @@
         </div>
         <div>
           <label for="productImage">Image</label>
-          <input type="file" id="productImage" name="productImage" value="<% if (edit) {%><%= product.imagePath %><% } %>"/>
+          <input type="file" id="productImage" name="productImage" />
         </div>
+        <% if (edit) {%>
+          <input type="hidden" name="oldImage" value="<%= product.imagePath %>" />
+        <% } %>   
         <button type="submit"><% if (edit) { %>Edit Product<% } else { %>Add Product<% } %></button>
 
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">

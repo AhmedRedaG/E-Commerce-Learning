@@ -9,4 +9,6 @@ router.get("/", isUserAuth, shopController.getOrders);
 
 router.post("/", isUserAuth, shopController.postOrders);
 
+router.get("/invoice/:orderId", isUserAuth, shopController.getOrderInvoice);
+
 export default router;

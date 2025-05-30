@@ -5,6 +5,7 @@ import session from "express-session";
 import connectMongoDbSession from "connect-mongodb-session";
 import csrf from "csurf";
 import flash from "connect-flash";
+import multer from "multer";
 
 import adminRoutes from "./routers/admin.js";
 import productsRoutes from "./routers/products.js";
@@ -26,15 +27,29 @@ const store = new MongoDBStore({
   collection: "sessions",
 });
 
-const csrfProtection = csrf();
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "images/productImages");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" + file.originalname);
+  },
+});
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) cb(null, true);
+  else cb(null, false);
+};
 
 const app = express();
 
 app.set("view engine", "ejs");
 app.set("views", "views");
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded());
+app.use(multer({ storage, fileFilter }).single("productImage"));
 app.use(express.static(path("public")));
+app.use(express.static(path("images")));
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -43,7 +58,7 @@ app.use(
     store,
   })
 );
-app.use(csrfProtection);
+app.use(csrf());
 app.use(flash());
 
 app.use((req, res, next) => {

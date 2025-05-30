@@ -1,5 +1,8 @@
 import Order from "../models/orderModel.js";
 
+import path from "../util/pathResolver.js";
+import { generateInvoicePDF } from "../util/pdfGenerator.js";
+
 export const getCart = (req, res) => {
   const cart = req.user.getCart();
   const totalPrice = req.user.getTotalPrice();
@@ -87,6 +90,25 @@ export const postOrders = (req, res, next) => {
     .then(() => {
       req.user.clearCart();
       res.redirect("/orders");
+    })
+    .catch(next);
+};
+
+export const getOrderInvoice = (req, res, next) => {
+  const userId = req.user._id;
+  const orderId = req.params.orderId;
+  Order.findById({ _id: orderId, userId })
+    .then((order) => {
+      if (!order) {
+        return res.redirect("/orders");
+      }
+      const invoiceName = userId + "-" + orderId + ".pdf";
+      const filePath = path("data", "invoices", invoiceName);
+
+      generateInvoicePDF(order, filePath).then(() => {
+        res.setHeader("Content-Disposition", "inline; filename=" + invoiceName);
+        res.sendFile(filePath);
+      });
     })
     .catch(next);
 };

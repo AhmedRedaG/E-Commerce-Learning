@@ -16,13 +16,14 @@
       <div class="products">
         <% for (let product of products) { %>
           <div class="product">
-            <img src="https://picsum.photos/200" alt="Product" />
+            <img src="/productImages/<%= product.imagePath %>" alt="Product" />
             <h2><%= product.title %></h2>
             <p>Price: $<%= product.price %></p>
             <button><a href="/products/<%= product._id %>">View Details</a></button>
             <button><a href="/admin/edit-product/<%= product._id %>">Edit</a></button>
             <form action="/admin/delete-product" method="post" >
               <input type="hidden" name="_id" value="<%= product._id %>"/>
+              <input type="hidden" name="oldImage" value="<%= product.imagePath %>"/>
               <button type="submit">Delete</button>
 
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">

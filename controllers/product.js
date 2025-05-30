@@ -3,6 +3,8 @@ import { validationResult } from "express-validator";
 import Product from "../models/productModel.js";
 import User from "../models/userModel.js";
 
+import { deleteImage } from "../util/fileHelper.js";
+
 export const getProducts = (req, res, next) => {
   if (req.user) {
     if (req.user.role === "admin") {
@@ -62,6 +64,16 @@ export const getAddProduct = (req, res) => {
 
 export const postAddProduct = (req, res, next) => {
   const productData = req.body;
+  const imageData = req.file;
+
+  if (imageData) {
+    productData.imagePath = imageData.filename;
+  } else {
+    req.flash("error", "error in image field");
+    return res.redirect(
+      `/admin/add-product/?title=${productData.title}&price=${productData.price}&description=${productData.description}`
+    );
+  }
 
   const validationResults = validationResult(req);
   if (!validationResults.isEmpty()) {
@@ -98,6 +110,12 @@ export const getEditProduct = (req, res, next) => {
 export const postEditProduct = (req, res, next) => {
   const product = req.body;
   const productId = req.params.productId;
+  const imageData = req.file;
+
+  if (imageData) {
+    deleteImage(req.body.oldImage);
+    product.imagePath = imageData.filename;
+  }
 
   const validationResults = validationResult(req);
   if (!validationResults.isEmpty()) {
@@ -113,6 +131,7 @@ export const postEditProduct = (req, res, next) => {
           $set: {
             "cart.$.title": product.title,
             "cart.$.price": product.price,
+            "cart.$.imagePath": product.imagePath,
           },
         }
       ).then(() => {
@@ -125,7 +144,11 @@ export const postEditProduct = (req, res, next) => {
 export const postDeleteProduct = (req, res, next) => {
   const productId = req.body._id;
   Product.findByIdAndDelete(productId)
-    .then(() => {
+    .then((deletedProduct) => {
+      if (!deletedProduct) {
+        return next(new Error("error in deleting product"));
+      }
+      deleteImage(deletedProduct.imagePath);
       User.updateMany(
         { role: "user", "cart.id": productId },
         {

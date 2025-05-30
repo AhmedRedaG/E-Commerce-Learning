@@ -1,6 +1,7 @@
 import Order from "../models/orderModel.js";
 
 import path from "../util/pathResolver.js";
+import { generateInvoicePDF } from "../util/pdfGenerator.js";
 
 export const getCart = (req, res) => {
   const cart = req.user.getCart();
@@ -101,10 +102,13 @@ export const getOrderInvoice = (req, res, next) => {
       if (!order) {
         return res.redirect("/orders");
       }
-      const filePath = path("data", "invoices", "soft-computing-project.pdf");
+      const invoiceName = userId + "-" + orderId + ".pdf";
+      const filePath = path("data", "invoices", invoiceName);
 
-      res.setHeader("Content-Disposition", "inline; filename=test.pdf");
-      res.sendFile(filePath);
+      generateInvoicePDF(order, filePath).then(() => {
+        res.setHeader("Content-Disposition", "inline; filename=" + invoiceName);
+        res.sendFile(filePath);
+      });
     })
     .catch(next);
 };

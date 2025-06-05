@@ -11,12 +11,22 @@ export const getProducts = (req, res, next) => {
       return res.redirect("/admin/products");
     }
   }
+
+  const page = req.query.page || 0;
+  const limit = 2;
   Product.find()
+    .skip(page * limit)
+    .limit(limit)
     .then((products) => {
-      res.render("shop/products", {
-        pageTitle: "All Products",
-        currentPath: "/products",
-        products: products,
+      Product.countDocuments().then((totalCount) => {
+        res.render("shop/products", {
+          pageTitle: "All Products",
+          currentPath: "/products",
+          products,
+          totalCount,
+          page,
+          limit,
+        });
       });
     })
     .catch(next);

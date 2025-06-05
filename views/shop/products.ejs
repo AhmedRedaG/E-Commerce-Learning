@@ -16,7 +16,7 @@
       <div class="products">
         <% for (let product of products) { %>
           <div class="product">
-            <img src="https://picsum.photos/200" alt="Product" />
+            <img src="/productImages/<%= product.imagePath %>" alt="Product" />
             <h2><%= product.title %></h2>
             <p>Price: $<%= product.price %></p>
             <button><a href="/products/<%= product._id %>">View Details</a></button>
@@ -28,6 +28,15 @@
             </form>
           </div>
         <% } %>
+      </div>
+      <div class="pages">
+        <% if (page > 0) { %>
+          <a href="/products/?page=<%= Number(page)-1 %>">pre</a>
+        <% } %>
+        <% if (page < Math.ceil(totalCount/limit) - 1) { %>
+          <a href="/products/?page=<%= Number(page)+1 %>">next</a>
+        <% } %>
+        <a href="/products/?page=<%= Math.ceil(totalCount/limit)-1 %>">last</a>
       </div>
     </main>
   </body>

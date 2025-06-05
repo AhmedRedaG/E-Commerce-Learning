@@ -16,6 +16,7 @@ const userSchema = new Schema({
       id: { type: String, required: true },
       title: { type: String, required: true },
       price: { type: Number, required: true },
+      imagePath: { type: String, required: true },
       count: { type: Number, required: true },
     },
   ],
@@ -34,6 +35,7 @@ userSchema.methods.addItem = function (productId) {
           id: productId,
           title: productData.title,
           price: productData.price,
+          imagePath: productData.imagePath,
           count: 1,
         });
       } else {
@@ -74,6 +76,7 @@ userSchema.methods.updateItem = function (productId, productData) {
   const productIndex = this.cart.findIndex((e) => e.id === productId);
   this.cart[productIndex].title = productData.title;
   this.cart[productIndex].price = productData.price;
+  this.cart[productIndex].imagePath = productData.imagePath;
   return this.save();
 };
 

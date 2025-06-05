@@ -12,7 +12,7 @@
         <p style="color:red; margin-bottom:10px; font-size:1.2rem;"><%= errorMessage %></p>
       <% } %>
 
-      <form action="/admin/<% if (edit) {%>edit-product/<%= product._id %><% } else { %>add-product<% } %>" method="POST">
+      <form action="/admin/<% if (edit) {%>edit-product/<%= product._id %><% } else { %>add-product<% } %>" method="POST" enctype="multipart/form-data">
         <div>
           <label for="title">Title</label>
           <input type="text" id="title" name="title" required value="<% if (edit) {%><%= product.title %><% } else { %><%= oldData.title %><% } %>"/>
@@ -25,6 +25,13 @@
           <label for="description">Description</label>
           <textarea id="description" name="description" required><% if (edit) {%><%= product.description %><% } else { %><%= oldData.description %><% } %></textarea>
         </div>
+        <div>
+          <label for="productImage">Image</label>
+          <input type="file" id="productImage" name="productImage" />
+        </div>
+        <% if (edit) {%>
+          <input type="hidden" name="oldImage" value="<%= product.imagePath %>" />
+        <% } %>   
         <button type="submit"><% if (edit) { %>Edit Product<% } else { %>Add Product<% } %></button>
 
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
